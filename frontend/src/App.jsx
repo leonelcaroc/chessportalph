@@ -1,9 +1,9 @@
-import React from "react";
+import Header from "./layout/Header/Header.jsx";
 
 const App = () => {
   return (
     <>
-      <h1>Chess Portal</h1>
+      <Header />
     </>
   );
 };
