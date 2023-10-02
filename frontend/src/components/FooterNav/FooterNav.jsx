@@ -1,21 +1,20 @@
 import { Center } from "@chakra-ui/react";
 
-const NavButton = ({ buttonName }) => {
+const FooterNav = ({ buttonName }) => {
   return (
     <Center
       padding="0 1rem"
       marginBlock="1rem"
       cursor="pointer"
-      color="neutral.100"
-      textShadow="2px 3px 2px rgba(0,0,0,0.5)"
+      color="brand.200"
       fontFamily="inter.300"
-      fontSize="1.2rem"
+      fontSize="1rem"
       _hover={{ textShadow: "none" }}
-      _active={{ color: "neutral.300" }}
+      _active={{ color: "neutral.100" }}
     >
       {buttonName}
     </Center>
   );
 };
 
-export default NavButton;
+export default FooterNav;

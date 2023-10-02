@@ -20,6 +20,8 @@ const Header = () => {
           fontFamily="inter.700"
           color="neutral.100"
           textShadow="2px 3px 2px rgba(0,0,0,0.5)"
+          cursor="pointer"
+          _active={{ bgColor: "accent.400" }}
         >
           Chess Portal PH
         </Text>
