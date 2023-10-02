@@ -1,20 +1,37 @@
 module.exports = {
-  root: true,
-  env: { browser: true, es2020: true },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react/jsx-runtime',
-    'plugin:react-hooks/recommended',
-  ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
-  rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
+  env: {
+    browser: true,
+    es2021: true,
   },
-}
+  extends: ["airbnb", "plugin:import/errors", "plugin:import/warnings"],
+  overrides: [
+    {
+      env: {
+        node: true,
+      },
+      files: [".eslintrc.{js}"],
+      parserOptions: {
+        sourceType: "script",
+      },
+    },
+  ],
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module",
+  },
+  rules: {
+    "arrow-body-style": ["error", "always"],
+    "object-curly-newline": ["off"],
+    "react/jsx-boolean-value": ["off"],
+    "react/function-component-definition": ["off"],
+    "react/prop-types": "off",
+    "comma-dangle": ["off"],
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off",
+    "linebreak-style": ["off"],
+    quotes: ["off"],
+    "import/extensions": ["off"],
+    "import/named": 2,
+    "import/export": 2,
+  },
+};
