@@ -1,7 +1,7 @@
 import "./footer.module.css";
 
-const Footer = () => {
+const Footr = () => {
   return <div>Footer</div>;
 };
 
-export default Footer;
+export default Footr;

@@ -1,0 +1,17 @@
+@import url("font-family.css");
+
+/* Fonts
+  Inter-Thin
+  Inter-ExtraLight
+  Inter-Light
+  Inter-Medium
+  Inter-Regular
+  Inter-SemiBold
+  Inter-Bold
+  Inter-ExtraBold
+  Inter-Black
+ */
+
+body {
+  font-family: "Inter-Medium" !important;
+}

@@ -1,27 +1,31 @@
-import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
-import { BiChevronDown } from "react-icons/bi";
-import React from "react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import "./header.module.css";
+import Nav from "../Nav/Nav";
 
 const Header = () => {
   return (
-    <Menu h="100rem" w="100rem">
-      <MenuButton
-        h="10rem"
-        w="10rem"
-        bgGradient="linear(to-r, green.200, pink.500)"
-        rightIcon={<BiChevronDown />}
-      >
-        Actions
-      </MenuButton>
-      <MenuList>
-        <MenuItem>Download</MenuItem>
-        <MenuItem>Create a Copy</MenuItem>
-        <MenuItem>Mark as Draft</MenuItem>
-        <MenuItem>Delete</MenuItem>
-        <MenuItem>Attend a Workshop</MenuItem>
-      </MenuList>
-    </Menu>
+    <Flex
+      as="header"
+      w="full"
+      h="5rem"
+      bgColor="brand.100"
+      justifyContent="space-between"
+      alignItems="center"
+      paddingInline="2rem"
+    >
+      <Box>
+        <Text
+          as="h2"
+          fontSize="2rem"
+          fontFamily="inter.700"
+          color="neutral.100"
+          textShadow="2px 3px 2px rgba(0,0,0,0.5)"
+        >
+          Chess Portal PH
+        </Text>
+      </Box>
+      <Nav />
+    </Flex>
   );
 };
 
