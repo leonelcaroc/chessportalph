@@ -13,5 +13,8 @@
  */
 
 body {
-  font-family: "Inter-Medium" !important;
+  font-family: "Inter" !important;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }

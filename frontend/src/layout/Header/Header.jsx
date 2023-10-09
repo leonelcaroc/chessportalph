@@ -1,8 +1,11 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, useMediaQuery } from "@chakra-ui/react";
 import "./header.module.css";
 import Nav from "../Nav/Nav";
+import SideNav from "../../components/SideNav/SideNav";
 
 const Header = () => {
+  const [isLargerThan60Rem] = useMediaQuery("(min-width: 60rem)");
+
   return (
     <Flex
       as="header"
@@ -16,7 +19,7 @@ const Header = () => {
       <Box>
         <Text
           as="h2"
-          fontSize="2rem"
+          fontSize="clamp(1.2rem, -1.12rem + 12.8vw, 2rem)"
           fontFamily="inter.700"
           color="neutral.100"
           textShadow="2px 3px 2px rgba(0,0,0,0.5)"
@@ -26,7 +29,7 @@ const Header = () => {
           Chess Portal PH
         </Text>
       </Box>
-      <Nav />
+      {isLargerThan60Rem ? <Nav /> : <SideNav />}
     </Flex>
   );
 };

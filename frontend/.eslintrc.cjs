@@ -20,6 +20,7 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
+    "no-nested-ternary": ["off"],
     "arrow-body-style": ["error", "always"],
     "object-curly-newline": ["off"],
     "react/jsx-boolean-value": ["off"],
@@ -33,5 +34,9 @@ module.exports = {
     "import/extensions": ["off"],
     "import/named": 2,
     "import/export": 2,
+    "import/order": ["off"],
+    indent: ["off"],
+    "import/no-extraneous-dependencies": ["off"],
+    "react/jsx-one-expression-per-line": ["off"],
   },
 };
