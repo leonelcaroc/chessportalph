@@ -19,7 +19,6 @@ const Home = () => {
 
   return (
     <Flex
-      flex="1"
       paddingInline="3rem"
       paddingTop="3rem"
       paddingBottom="2rem"
