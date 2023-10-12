@@ -44,9 +44,27 @@ const SideNav = () => {
           <DrawerHeader fontSize="1.5rem">Chess Portal PH</DrawerHeader>
           <DrawerBody>
             <VStack spacing="0rem">
-              <SideNavButton buttonName="Home" />
-              <SideNavButton buttonName="Ratings" />
-              <SideNavButton buttonName="Contact us" />
+              <SideNavButton
+                buttonName="Home"
+                route="/"
+                closeSideNav={() => {
+                  onClose();
+                }}
+              />
+              <SideNavButton
+                buttonName="Ratings"
+                route="/ratings"
+                closeSideNav={() => {
+                  onClose();
+                }}
+              />
+              <SideNavButton
+                buttonName="Contact us"
+                route="/contactus"
+                closeSideNav={() => {
+                  onClose();
+                }}
+              />
             </VStack>
           </DrawerBody>
         </DrawerContent>
