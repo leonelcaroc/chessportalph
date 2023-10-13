@@ -112,43 +112,10 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Update user profile" });
 });
 
-// desc     Search query player profile
-// route    GET /api/search
-// @access  Public
-const getPlayerProfile = asyncHandler(async (req, res) => {
-  // const { query } = req.query;
-
-  res.status(200).json({ message: "Search query" });
-
-  // ---------------------------------------
-
-  // if (!query) {
-  //   return res.status(400).json({ error: "Search query is required" });
-  // }
-
-  // // Trim any leading or trailing spaces from the search query
-  // const trimmedQuery = query.trim();
-
-  // try {
-  //   const results = await Search.find({
-  //     $or: [
-  //       { ID_No: { $regex: trimmedQuery, $options: "i" } }, // Case-insensitive search for ID_No
-  //       { NAME: { $regex: trimmedQuery, $options: "i" } }, // Case-insensitive search for NAME
-  //       { SURNAME: { $regex: trimmedQuery, $options: "i" } }, // Case-insensitive search for SURNAME
-  //     ],
-  //   });
-
-  //   res.json(results);
-  // } catch (error) {
-  //   res.status(500).json({ error: "An error occurred" });
-  // }
-});
-
 export {
   authUser,
   registerUser,
   logoutUser,
   getUserProfile,
   updateUserProfile,
-  getPlayerProfile,
 };
