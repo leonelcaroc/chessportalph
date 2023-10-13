@@ -46,3 +46,4 @@ app.listen(PORT, () => {
 // POST /api/users/logout** - Logout user and clear cookie
 // GET /api/users/profile** - Get user profile
 // PUT /api/users/profile** - Update profile
+// GET /api/search/ratings** - Search Player Profile
