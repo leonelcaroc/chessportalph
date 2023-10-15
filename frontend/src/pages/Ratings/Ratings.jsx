@@ -34,6 +34,7 @@ import { useQuery, QueryClient } from "react-query";
 import axios from "axios";
 
 const Ratings = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const controller = new AbortController();
   const { signal } = controller;
   const queryClient = new QueryClient();
@@ -52,8 +53,6 @@ const Ratings = () => {
     enabled: false,
     keepPreviousData: true,
     staleTime: 5000,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
   });
 
   useEffect(() => {
@@ -81,7 +80,7 @@ const Ratings = () => {
     e.preventDefault();
     controller.abort();
     setPage(1);
-    await refetch();
+    refetch({ force: true });
   };
 
   if (isLoading) {
