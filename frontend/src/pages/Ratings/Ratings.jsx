@@ -1,3 +1,4 @@
+/* eslint-disable no-promise-executor-return */
 /* eslint-disable no-else-return */
 /* eslint-disable no-undef */
 /* eslint-disable no-unneeded-ternary */
@@ -35,8 +36,8 @@ import axios from "axios";
 
 const Ratings = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const controller = new AbortController();
-  const { signal } = controller;
+  const abortController = new AbortController();
+  const { signal } = abortController.signal;
   const queryClient = new QueryClient();
   const toast = useToast();
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,13 +61,15 @@ const Ratings = () => {
       refetch();
     }
     return () => {
-      controller.abort();
+      abortController.abort();
+      queryClient.removeQueries({ queryKey: "data" });
     };
   }, [page]);
 
   const fetchData = async (searchWord, page = 1) => {
     const { data } = await axios.get(
-      `api/search/ratings?query=${searchWord}&page=${page}`
+      `api/search/ratings?query=${searchWord}&page=${page}`,
+      { signal }
     );
     return data;
   };
@@ -78,9 +81,15 @@ const Ratings = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    controller.abort();
+    abortController.abort();
+
+    queryClient.removeQueries({ queryKey: "data" });
+
     setPage(1);
-    refetch({ force: true });
+
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    refetch();
   };
 
   if (isLoading) {
