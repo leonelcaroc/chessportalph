@@ -2,7 +2,6 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
@@ -15,6 +14,7 @@ const DataTable = () => {
       <Table variant="striped" colorScheme="teal">
         <Thead>
           <Tr>
+            <Th>No.</Th>
             <Th>Title</Th>
             <Th>Surname</Th>
             <Th>First Name</Th>
@@ -29,6 +29,7 @@ const DataTable = () => {
         </Thead>
         <Tbody>
           <Tr>
+            <Td>1</Td>
             <Td>GM</Td>
             <Td>Antonio</Td>
             <Td>Joey</Td>
@@ -41,13 +42,6 @@ const DataTable = () => {
             <Td>2417</Td>
           </Tr>
         </Tbody>
-        <Tfoot>
-          <Tr>
-            <Th colSpan="3">To convert</Th>
-            <Th colSpan="4" />
-            <Th colSpan="3">Prev and Next</Th>
-          </Tr>
-        </Tfoot>
       </Table>
     </TableContainer>
   );

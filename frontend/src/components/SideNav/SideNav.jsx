@@ -11,8 +11,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRef } from "react";
-import { RxHamburgerMenu } from "react-icons/rx";
 import SideNavButton from "./SideNavButton";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
 const SideNav = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -22,7 +22,7 @@ const SideNav = () => {
     <>
       <Box padding="0.5rem">
         <Icon
-          as={RxHamburgerMenu}
+          as={HamburgerIcon}
           w={8}
           h={8}
           color="#fff"
