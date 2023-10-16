@@ -62,7 +62,6 @@ const Ratings = () => {
     }
     return () => {
       abortController.abort();
-      queryClient.removeQueries({ queryKey: "data" });
     };
   }, [page]);
 
@@ -82,8 +81,6 @@ const Ratings = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     abortController.abort();
-
-    queryClient.removeQueries({ queryKey: "data" });
 
     setPage(1);
 
