@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable no-else-return */
 /* eslint-disable no-undef */
@@ -124,6 +125,7 @@ const Ratings = () => {
         <Table variant="striped" colorScheme="teal">
           <Thead>
             <Tr>
+              <Th>Local ID</Th>
               <Th>Title</Th>
               <Th>Surname</Th>
               <Th>First Name</Th>
@@ -139,6 +141,7 @@ const Ratings = () => {
             {!isLoading && !isFetching && ratingData
               ? ratingData?.map((player) => (
                   <Tr key={player._id}>
+                    <Td>{player.ID_No}</Td>
                     <Td>{player.TITLE}</Td>
                     <Td>{player.SURNAME}</Td>
                     <Td>{player.NAME}</Td>
@@ -160,7 +163,7 @@ const Ratings = () => {
         <Button
           bgColor="gray"
           onClick={prevPage}
-          isDisabled={isPreviousData || page === 1}
+          isDisabled={isPreviousData || page === 1 || isFetching || isLoading}
         >
           Previous Page
         </Button>
@@ -168,7 +171,12 @@ const Ratings = () => {
         <Button
           bgColor="gray"
           onClick={nextPage}
-          isDisabled={ratingData?.length < 10 || !ratingData?.length}
+          isDisabled={
+            ratingData?.length < 10 ||
+            !ratingData?.length ||
+            isFetching ||
+            isLoading
+          }
         >
           Next Page
         </Button>
