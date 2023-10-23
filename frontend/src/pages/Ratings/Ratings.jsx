@@ -81,6 +81,7 @@ const Ratings = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+
     abortController.abort();
 
     setPage(1);
@@ -99,13 +100,15 @@ const Ratings = () => {
   }
 
   return (
-    <Flex flexDirection="column">
-      <Flex alignItems="center">
+    <Flex flexDirection="column" marginInline="3rem">
+      <Flex alignItems="center" margin="2rem 0 0">
         <Heading as="h1">Local Ratings</Heading>
-        <Text as="i">(based on September 2023)</Text>
+        <Text alignSelf="end" as="i" fontSize="1.2rem">
+          (based on October 2023)
+        </Text>
       </Flex>
-      <Flex>
-        <InputGroup maxWidth="20rem">
+      <Flex marginBlock="1rem">
+        <InputGroup maxWidth="20rem" marginRight="1rem">
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
           </InputLeftElement>
@@ -114,14 +117,27 @@ const Ratings = () => {
             placeholder="Search player or id"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            borderWidth="1.5px"
+            borderColor="gray.400"
+            spellCheck="false"
           />
         </InputGroup>
-        <Button bgColor="gray" type="submit" onClick={handleSearch}>
+        <Button
+          bgColor="gray"
+          type="submit"
+          onClick={handleSearch}
+          border="1px solid #E2E8F0"
+          _hover={{
+            bgColor: "#E2E8F0",
+            borderColor: "gray",
+            borderStyle: "solid",
+          }}
+        >
           Search
         </Button>
       </Flex>
       {/* ------Data Table------- */}
-      <TableContainer>
+      <TableContainer border="1px solid #d6d6d6" borderRadius="5px">
         <Table variant="striped" colorScheme="teal">
           <Thead>
             <Tr>
@@ -129,7 +145,6 @@ const Ratings = () => {
               <Th>Title</Th>
               <Th>Surname</Th>
               <Th>First Name</Th>
-              <Th>M.I.</Th>
               <Th>Gender</Th>
               <Th>Fed</Th>
               <Th>Standard</Th>
@@ -138,36 +153,81 @@ const Ratings = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {!isLoading && !isFetching && ratingData
-              ? ratingData?.map((player) => (
-                  <Tr key={player._id}>
-                    <Td>{player.ID_No}</Td>
-                    <Td>{player.TITLE}</Td>
-                    <Td>{player.SURNAME}</Td>
-                    <Td>{player.NAME}</Td>
-                    <Td>T.</Td>
-                    <Td>{player.SEX}</Td>
-                    <Td>{player.Fed}</Td>
-                    <Td>{player.STD_}</Td>
-                    <Td>{player.Rapid}</Td>
-                    <Td>{player.Blitz}</Td>
-                  </Tr>
-                ))
-              : null}
+            {!isLoading && !isFetching && ratingData?.length !== 0 ? (
+              ratingData?.map((player) => (
+                <Tr key={player._id}>
+                  <Td>{player.ID_No}</Td>
+                  <Td>
+                    <Text
+                      fontWeight="bold"
+                      className={
+                        player.TITLE.toLowerCase() === "gm" ||
+                        player.TITLE.toLowerCase() === "wgm"
+                          ? "gm-title"
+                          : player.TITLE.toLowerCase() === "im" ||
+                            player.TITLE.toLowerCase() === "wim"
+                          ? "im-title"
+                          : player.TITLE.toLowerCase() === "fm" ||
+                            player.TITLE.toLowerCase() === "wfm"
+                          ? "fm-title"
+                          : player.TITLE.toLowerCase() === "cm" ||
+                            player.TITLE.toLowerCase() === "wcm"
+                          ? "cm-title"
+                          : player.TITLE.toLowerCase() === "nm" ||
+                            player.TITLE.toLowerCase() === "wnm"
+                          ? "nm-title"
+                          : player.TITLE.toLowerCase() === "agm"
+                          ? "agm-title"
+                          : player.TITLE.toLowerCase() === "aim"
+                          ? "aim-title"
+                          : player.TITLE.toLowerCase() === "afm"
+                          ? "afm-title"
+                          : player.TITLE.toLowerCase() === "acm"
+                          ? "acm-title"
+                          : null
+                      }
+                    >
+                      {player.TITLE}
+                    </Text>
+                  </Td>
+                  <Td>{player.SURNAME}</Td>
+                  <Td>{player.NAME}</Td>
+                  <Td>
+                    {player.SEX.toLowerCase() === "f"
+                      ? "Female"
+                      : player.SEX.toLowerCase() === ""
+                      ? "Male"
+                      : null}
+                  </Td>
+                  <Td>{player.Fed}</Td>
+                  <Td>{player.STD_}</Td>
+                  <Td>{player.Rapid}</Td>
+                  <Td>{player.Blitz}</Td>
+                </Tr>
+              ))
+            ) : (
+              <Tr>
+                <Td textAlign="center" colSpan="9">
+                  No Results Found...
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         </Table>
       </TableContainer>
       {/* ------Data Table------- */}
 
-      <Flex justifyContent="center">
+      <Flex justifyContent="end" marginBlock="2rem">
         <Button
           bgColor="gray"
           onClick={prevPage}
           isDisabled={isPreviousData || page === 1 || isFetching || isLoading}
         >
-          Previous Page
+          Previous
         </Button>
-        <Text marginInline="2rem">Page {page}</Text>
+        <Flex marginInline="2rem" alignItems="center">
+          ... Page {page} ...
+        </Flex>
         <Button
           bgColor="gray"
           onClick={nextPage}
@@ -178,7 +238,7 @@ const Ratings = () => {
             isLoading
           }
         >
-          Next Page
+          Next
         </Button>
       </Flex>
     </Flex>
