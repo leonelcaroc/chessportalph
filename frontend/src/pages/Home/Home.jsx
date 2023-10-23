@@ -1,5 +1,4 @@
 import mainlogo from "../../assets/images/logo_chess_portal.webp";
-import "./home.module.css";
 import { EmailIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import {
   Box,
