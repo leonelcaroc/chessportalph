@@ -6,6 +6,7 @@ import {
   Flex,
   Heading,
   Image,
+  Link,
   Text,
   useMediaQuery,
 } from "@chakra-ui/react";
@@ -61,18 +62,22 @@ const Home = () => {
           Rapid, Blitz, and Fischer Random 960.
         </Text>
         <Flex>
-          <Button
-            rightIcon={<EmailIcon />}
-            bgColor="brand.100"
-            color="neutral.100"
-            width="8rem"
-            marginInline="0.5rem"
-            _hover={{
-              bgColor: "neutral.300",
-            }}
-          >
-            Email
-          </Button>
+          <Box>
+            <Link as="a" href="mailto:chessportalph@gmail.com">
+              <Button
+                rightIcon={<EmailIcon />}
+                bgColor="brand.100"
+                color="neutral.100"
+                width="8rem"
+                marginInline="0.5rem"
+                _hover={{
+                  bgColor: "neutral.300",
+                }}
+              >
+                Email
+              </Button>
+            </Link>
+          </Box>
           <Button
             rightIcon={<ArrowForwardIcon />}
             color="brand.100"
