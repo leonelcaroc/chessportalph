@@ -21,10 +21,11 @@ const Footer = () => {
       </Flex>
       {!isLowerThan55Rem && (
         <Flex height="full">
-          <FooterNav buttonName="Home" />
-          <FooterNav buttonName="About" />
+          <FooterNav buttonName="Home" route="/" />
+          <FooterNav buttonName="Ratings" route="/ratings" />
+          {/* <FooterNav buttonName="About" />
           <FooterNav buttonName="Contact Us" />
-          <FooterNav buttonName="FAQs" />
+          <FooterNav buttonName="FAQs" /> */}
         </Flex>
       )}
     </Flex>
