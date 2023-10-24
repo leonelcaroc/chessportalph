@@ -63,7 +63,7 @@ const Home = () => {
         </Text>
         <Flex>
           <Box>
-            <Link as="a" href="mailto:chessportalph@gmail.com">
+            <Link as="a" href="mailto:chessportalph@gmail.com" isExternal>
               <Button
                 rightIcon={<EmailIcon />}
                 bgColor="brand.100"
