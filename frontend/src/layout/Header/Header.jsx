@@ -1,10 +1,13 @@
+/* eslint-disable arrow-body-style */
 import { Box, Flex, Text, useMediaQuery } from "@chakra-ui/react";
 import "./header.module.css";
 import Nav from "../Nav/Nav";
 import SideNav from "../../components/SideNav/SideNav";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isLargerThan60Rem] = useMediaQuery("(min-width: 60rem)");
+  const navigate = useNavigate();
 
   return (
     <Flex
@@ -16,7 +19,7 @@ const Header = () => {
       alignItems="center"
       paddingInline="2rem"
     >
-      <Box>
+      <Box onClick={() => navigate("/")}>
         <Text
           as="h2"
           fontSize="clamp(1.2rem, -1.12rem + 12.8vw, 2rem)"
