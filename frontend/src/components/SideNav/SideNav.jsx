@@ -58,13 +58,13 @@ const SideNav = () => {
                   onClose();
                 }}
               />
-              <SideNavButton
+              {/* <SideNavButton
                 buttonName="Contact us"
                 route="/contactus"
                 closeSideNav={() => {
                   onClose();
                 }}
-              />
+              /> */}
             </VStack>
           </DrawerBody>
         </DrawerContent>

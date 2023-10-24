@@ -8,7 +8,7 @@ const Nav = () => {
       <HStack spacing="3rem">
         <NavButton buttonName="Home" route="/" />
         <NavButton buttonName="Ratings" route="/ratings" />
-        <NavButton buttonName="Contact us" route="/contactus" />
+        {/* <NavButton buttonName="Contact us" route="/contactus" /> */}
       </HStack>
     </Box>
   );
