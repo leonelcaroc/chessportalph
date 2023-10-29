@@ -85,3 +85,19 @@ body {
   border-radius: 8px;
   outline: 1px solid #484ff6;
 }
+
+@media (max-width: 400px) {
+  #data-head > th,
+  #data-row > td,
+  #data-expandable > td {
+    padding: 10px !important;
+  }
+}
+
+#data-head > th {
+  text-align: center !important;
+}
+
+#data-expandable > td > * {
+  margin-bottom: 7px !important;
+}
