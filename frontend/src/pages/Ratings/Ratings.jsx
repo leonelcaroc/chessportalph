@@ -20,26 +20,20 @@ import {
   InputLeftElement,
   Text,
   useToast,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
+  useMediaQuery,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SearchIcon } from "@chakra-ui/icons";
-// import DataTable from "../../components/DataTable/DataTable";
-import { useSearchQuery } from "../../store/searchSlice";
-import { useQuery, QueryClient } from "react-query";
+import DataTable from "../../components/DataTable/DataTable";
+import { useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 
 const Ratings = () => {
-  const [isMounted, setIsMounted] = useState(false);
-  const abortController = new AbortController();
-  const { signal } = abortController.signal;
-  const queryClient = new QueryClient();
+  const inputRef = useRef(null);
+  const buttonRef = useRef(null);
+  const queryClient = useQueryClient();
+  const [isLowerThan540] = useMediaQuery("(max-width: 540px)");
+  const [isLowerThan355] = useMediaQuery("(max-width: 355px)");
   const toast = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -52,9 +46,16 @@ const Ratings = () => {
     isPreviousData,
     refetch,
   } = useQuery(["data", page], () => fetchData(searchTerm, page), {
-    enabled: false,
     keepPreviousData: true,
     staleTime: 5000,
+    onError: () => {
+      toast({
+        title: "Something went wrong...",
+        status: "error",
+        duration: 3000,
+        position: "bottom-right",
+      });
+    },
   });
 
   useEffect(() => {
@@ -62,15 +63,29 @@ const Ratings = () => {
       refetch();
     }
     return () => {
-      abortController.abort();
+      queryClient.cancelQueries("data");
+      queryClient.removeQueries("data");
     };
   }, [page]);
 
-  const fetchData = async (searchWord, page = 1) => {
+  const fetchData = async (searchWord, page) => {
+    if (searchWord === "") {
+      searchWord = "a";
+    }
+
     const { data } = await axios.get(
-      `api/search/ratings?query=${searchWord}&page=${page}`,
-      { signal }
+      `api/search/ratings?query=${searchWord}&page=${page}`
     );
+
+    if (data?.length === 0) {
+      toast({
+        title: "No results Found",
+        status: "error",
+        duration: 3000,
+        position: "bottom-right",
+      });
+    }
+
     return data;
   };
 
@@ -82,29 +97,38 @@ const Ratings = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
 
-    abortController.abort();
-
     setPage(1);
 
-    await new Promise((resolve) => setTimeout(resolve, 20));
-
-    refetch();
+    setTimeout(() => {
+      refetch();
+    }, 0);
   };
 
-  if (isLoading) {
-    return <span>Loading...</span>;
-  }
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
 
-  if (isError) {
-    return <span>Error: {error.message}</span>;
-  }
+      buttonRef.current.click();
+    }
+  };
 
   return (
     <Flex flexDirection="column" marginInline="3rem">
       <Flex alignItems="center" margin="2rem 0 0">
-        <Heading as="h1">Local Ratings</Heading>
-        <Text alignSelf="end" as="i" fontSize="1.2rem">
-          (based on October 2023)
+        <Heading
+          as="h1"
+          fontSize={isLowerThan540 ? "1.4rem" : "1.875rem"}
+          whiteSpace="nowrap"
+        >
+          Local Ratings
+        </Heading>
+        <Text
+          alignSelf="end"
+          as="i"
+          fontSize={isLowerThan540 ? "1rem" : "1.2rem"}
+          whiteSpace="nowrap"
+        >
+          {isLowerThan355 ? "(October 2023)" : "(based on October 2023)"}
         </Text>
       </Flex>
       <Flex marginBlock="1rem">
@@ -114,18 +138,22 @@ const Ratings = () => {
           </InputLeftElement>
           <Input
             type="search"
-            placeholder="Search player or id"
+            placeholder="Search player"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             borderWidth="1.5px"
             borderColor="gray.400"
             spellCheck="false"
+            onKeyDown={handleKeyDown}
+            ref={inputRef}
           />
         </InputGroup>
         <Button
           bgColor="gray"
           type="submit"
           onClick={handleSearch}
+          ref={buttonRef}
+          isLoading={isFetching}
           border="1px solid #E2E8F0"
           _hover={{
             bgColor: "#E2E8F0",
@@ -136,99 +164,34 @@ const Ratings = () => {
           Search
         </Button>
       </Flex>
-      {/* ------Data Table------- */}
-      <TableContainer border="1px solid #d6d6d6" borderRadius="5px">
-        <Table variant="striped" colorScheme="teal">
-          <Thead>
-            <Tr>
-              <Th>Local ID</Th>
-              <Th>Title</Th>
-              <Th>Surname</Th>
-              <Th>First Name</Th>
-              <Th>Gender</Th>
-              <Th>Fed</Th>
-              <Th>Standard</Th>
-              <Th>Rapid</Th>
-              <Th>Blitz</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {!isLoading && !isFetching && ratingData?.length !== 0 ? (
-              ratingData?.map((player) => (
-                <Tr key={player._id}>
-                  <Td>{player.ID_No}</Td>
-                  <Td>
-                    <Text
-                      fontWeight="bold"
-                      className={
-                        player.TITLE.toLowerCase() === "gm" ||
-                        player.TITLE.toLowerCase() === "wgm"
-                          ? "gm-title"
-                          : player.TITLE.toLowerCase() === "im" ||
-                            player.TITLE.toLowerCase() === "wim"
-                          ? "im-title"
-                          : player.TITLE.toLowerCase() === "fm" ||
-                            player.TITLE.toLowerCase() === "wfm"
-                          ? "fm-title"
-                          : player.TITLE.toLowerCase() === "cm" ||
-                            player.TITLE.toLowerCase() === "wcm"
-                          ? "cm-title"
-                          : player.TITLE.toLowerCase() === "nm" ||
-                            player.TITLE.toLowerCase() === "wnm"
-                          ? "nm-title"
-                          : player.TITLE.toLowerCase() === "agm"
-                          ? "agm-title"
-                          : player.TITLE.toLowerCase() === "aim"
-                          ? "aim-title"
-                          : player.TITLE.toLowerCase() === "afm"
-                          ? "afm-title"
-                          : player.TITLE.toLowerCase() === "acm"
-                          ? "acm-title"
-                          : null
-                      }
-                    >
-                      {player.TITLE}
-                    </Text>
-                  </Td>
-                  <Td>{player.SURNAME}</Td>
-                  <Td>{player.NAME}</Td>
-                  <Td>
-                    {player.SEX.toLowerCase() === "f"
-                      ? "Female"
-                      : player.SEX.toLowerCase() === ""
-                      ? "Male"
-                      : null}
-                  </Td>
-                  <Td>{player.Fed}</Td>
-                  <Td>{player.STD_}</Td>
-                  <Td>{player.Rapid}</Td>
-                  <Td>{player.Blitz}</Td>
-                </Tr>
-              ))
-            ) : (
-              <Tr>
-                <Td textAlign="center" colSpan="9">
-                  No Results Found...
-                </Td>
-              </Tr>
-            )}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      {/* ------Data Table------- */}
 
+      <DataTable
+        isLoading={isLoading}
+        isError={isError}
+        isFetching={isFetching}
+        ratingData={ratingData}
+        error={error}
+      />
       <Flex justifyContent="end" marginBlock="2rem">
         <Button
+          border="1px solid gray"
           bgColor="gray"
           onClick={prevPage}
           isDisabled={isPreviousData || page === 1 || isFetching || isLoading}
         >
           Previous
         </Button>
-        <Flex marginInline="2rem" alignItems="center">
-          ... Page {page} ...
+        <Flex
+          marginInline={isLowerThan355 ? "1rem" : "2rem"}
+          alignItems="center"
+        >
+          <Text>
+            {isLowerThan355 ? null : "... "}Page {page}
+            {isLowerThan355 ? null : " ..."}
+          </Text>
         </Flex>
         <Button
+          border="1px solid gray"
           bgColor="gray"
           onClick={nextPage}
           isDisabled={
