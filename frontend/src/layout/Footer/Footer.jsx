@@ -17,7 +17,7 @@ const Footer = () => {
         alignItems="center"
         fontSize="clamp(0.6rem, -0.0737rem + 3.3684vw, 1rem)"
       >
-        Chess Portal PH © Copyright 2023, Inc. All rights reserved.
+        Chess Portal PH © Copyright 2024, Inc. All rights reserved.
       </Flex>
       {!isLowerThan55Rem && (
         <Flex height="full">
