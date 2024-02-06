@@ -123,12 +123,14 @@ const getImageLogo = asyncHandler(async (req, res) => {
     // "imageLogo",
     // imageName
   );
+  // console.log(process.cwd());
 
-  res.sendFile(imagePath, (err) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-  });
+  res.status(200).json({ message: process.cwd() });
+  // res.sendFile(imagePath, (err) => {
+  //   if (err) {
+  //     res.status(500).send(err);
+  //   }
+  // });
 });
 
 export {
