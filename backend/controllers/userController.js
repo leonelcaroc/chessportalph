@@ -2,6 +2,9 @@ import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import User from "../models/userModel.js";
 import Search from "../models/searchQueryModel.js";
+import path from "path";
+// import { fileURLToPath } from "url";
+// import { dirname } from "path";
 
 // desc     Auth user/set token
 // route    POST /api/users/auth
@@ -112,10 +115,26 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Update user profile" });
 });
 
+const getImageLogo = asyncHandler(async (req, res) => {
+  const imageName = "logo_chess_portal.png";
+  const imagePath = path.resolve(
+    "C:\\Users\\User\\Desktop\\chessportalph\\backend",
+    "imageLogo",
+    imageName
+  );
+
+  res.sendFile(imagePath, (err) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
+});
+
 export {
   authUser,
   registerUser,
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  getImageLogo,
 };
