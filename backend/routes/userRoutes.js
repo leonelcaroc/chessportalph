@@ -6,7 +6,6 @@ import {
   logoutUser,
   getUserProfile,
   updateUserProfile,
-  getImageLogo,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
