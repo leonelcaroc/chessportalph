@@ -118,19 +118,18 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 const getImageLogo = asyncHandler(async (req, res) => {
   const imageName = "logo_chess_portal.webp";
   const imagePath = path.join(
-    "/home/leo/apps/chessportalph/backend/imageLogo/logo_chess_portal.webp"
-    // __dirname,
-    // "imageLogo",
-    // imageName
+    // "/home/leo/apps/chessportalph/backend/imageLogo/logo_chess_portal.webp"
+    process.cwd(),
+    "imageLogo",
+    imageName
   );
   // console.log(process.cwd());
 
-  res.status(200).json({ message: process.cwd() });
-  // res.sendFile(imagePath, (err) => {
-  //   if (err) {
-  //     res.status(500).send(err);
-  //   }
-  // });
+  res.sendFile(imagePath, (err) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
 });
 
 export {
