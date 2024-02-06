@@ -17,6 +17,5 @@ router
   .route("/profile")
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
-router.get("/logo", getImageLogo);
 
 export default router;
