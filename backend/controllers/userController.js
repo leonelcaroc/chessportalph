@@ -118,7 +118,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 const getImageLogo = asyncHandler(async (req, res) => {
   const imageName = "logo_chess_portal.webp";
   const imagePath = path.join(
-    "/home/leo/apps/chessportalph/backend/imagelogo/logo_chess_portal.webp"
+    "/home/leo/apps/chessportalph/backend/imageLogo/logo_chess_portal.webp"
     // __dirname,
     // "imageLogo",
     // imageName
