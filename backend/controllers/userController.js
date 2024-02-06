@@ -118,8 +118,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 const getImageLogo = asyncHandler(async (req, res) => {
   const imageName = "logo_chess_portal.webp";
   const imagePath = path.resolve(
-    "C:\\Users\\User\\Desktop\\chessportalph\\backend",
-    "imageLogo",
+    "/home/leo/apps/chessportalph/backend/",
+    "imagelogo",
     imageName
   );
 
