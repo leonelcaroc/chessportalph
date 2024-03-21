@@ -1,24 +1,20 @@
-import { Outlet } from "react-router-dom";
-import { Flex } from "@chakra-ui/react";
-import Header from "./layout/Header/Header.jsx";
-import Footer from "./layout/Footer/Footer";
+import { Routes, Route } from "react-router-dom";
+import Home from "../src/pages/Home/Home.jsx";
+import Ratings from "../src/pages/Ratings/Ratings.jsx";
+import MainLayout from "./layout/MainLayout.jsx";
+import Admin from "./pages/Admin/Admin.jsx";
+import NotFound from "./pages/NotFound/NotFound.jsx";
 
 const App = () => {
   return (
-    <Flex flexDirection="column" height="100vh">
-      <Header />
-
-      <Flex
-        as="main"
-        flex="1"
-        margin="auto"
-        width="full"
-        justifyContent="center"
-      >
-        <Outlet />
-      </Flex>
-      <Footer />
-    </Flex>
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        <Route index={true} element={<Home />} />
+        <Route path="/ratings" element={<Ratings />} />
+      </Route>
+      <Route path="/admin" element={<Admin />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 
