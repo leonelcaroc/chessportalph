@@ -6,6 +6,6 @@ const searchSchema = mongoose.Schema({
   NAME: String,
 });
 
-const Search = mongoose.model("Marchs", searchSchema);
+const Search = mongoose.model("Aprils", searchSchema);
 
 export default Search;
