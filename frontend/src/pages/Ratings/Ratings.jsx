@@ -149,7 +149,7 @@ const Ratings = () => {
           />
         </InputGroup>
         <Button
-          bgColor="gray"
+          bgColor="gray.400"
           type="submit"
           onClick={handleSearch}
           ref={buttonRef}

@@ -1,5 +1,6 @@
 import mainlogo from "../../assets/images/logo_chess_portal.webp";
 import { EmailIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { FaChessKnight } from "react-icons/fa6";
 import {
   Box,
   Button,
@@ -10,8 +11,9 @@ import {
   Text,
   useMediaQuery,
 } from "@chakra-ui/react";
-
+import { useNavigate } from "react-router-dom";
 const Home = () => {
+  const navigate = useNavigate();
   const [isLowerThan75Rem] = useMediaQuery("(max-width: 75rem)");
   const redirectToWebsite = () => {
     window.location.href = "https://web.facebook.com/groups/2273539726042561/";
@@ -63,20 +65,22 @@ const Home = () => {
         </Text>
         <Flex>
           <Box>
-            <Link as="a" href="mailto:chessportalph@gmail.com" isExternal>
-              <Button
-                rightIcon={<EmailIcon />}
-                bgColor="brand.100"
-                color="neutral.100"
-                width="8rem"
-                marginInline="0.5rem"
-                _hover={{
-                  bgColor: "neutral.300",
-                }}
-              >
-                Email
-              </Button>
-            </Link>
+            {/* <Link as="a" href="mailto:chessportalph@gmail.com" isExternal> */}
+            <Button
+              // rightIcon={<EmailIcon />}
+              rightIcon={<FaChessKnight />}
+              bgColor="brand.100"
+              color="neutral.100"
+              // width="9rem"
+              marginInline="0.5rem"
+              _hover={{
+                bgColor: "neutral.300",
+              }}
+              onClick={() => navigate("/ratings")}
+            >
+              Search your Rating
+            </Button>
+            {/* </Link> */}
           </Box>
           <Button
             rightIcon={<ArrowForwardIcon />}
