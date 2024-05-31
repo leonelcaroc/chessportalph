@@ -5,6 +5,7 @@ import MainLayout from "./layout/MainLayout.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 import AdminLogin from "./pages/AdminLogin/AdminLogin.jsx";
 import NotFound from "./pages/NotFound/NotFound.jsx";
+import ContactUs from "./pages/ContactUs/ContactUs.jsx";
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Route path="/" element={<MainLayout />}>
         <Route index={true} element={<Home />} />
         <Route path="/ratings" element={<Ratings />} />
+        {/* <Route path="/contactus" element={<ContactUs />} /> */}
       </Route>
       <Route path="/adminlogin" element={<AdminLogin />} />
       <Route path="/admin" element={<Admin />} />
