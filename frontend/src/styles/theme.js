@@ -18,6 +18,7 @@ const theme = extendTheme({
       200: "rgba(0,0,0,0.5)",
       300: "#9BA4B5",
     },
+    new: "#D80032",
   },
   fonts: {
     body: "Inter, sans-serif",

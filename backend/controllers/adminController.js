@@ -9,20 +9,23 @@ const authAdmin = asyncHandler(async (req, res) => {
 
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
-    return res.status(200).json({
-      message: "Successfully login!",
-    });
+    return res
+      .status(200)
+      .json({ status: "success", message: "Successfully login!" });
   } else {
-    res.status(401).json({ error: "Invalid email or password" });
+    res
+      .status(401)
+      .json({ status: "error", message: "Invalid email or password" });
 
     throw new Error("Invalid email or password.");
   }
 });
 
 const registerAdmin = asyncHandler(async (req, res) => {
-  //   const { email, password } = req.body;
-  const email = "leonelcaroc25@gmail.com";
-  const password = "265941783Leyren.";
+  const { email, password } = req.body;
+  // const email = "leonelcaroc25@gmail.com";
+  // const email = "ycppap.inc@yahoo.com";
+  // const password = "123123123";
 
   const userExists = await Admin.findOne({ email: email });
 

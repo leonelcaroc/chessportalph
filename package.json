@@ -22,9 +22,12 @@
     "express-async-handler": "^1.2.0",
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.1",
-    "mongoose": "^7.3.4"
+    "mongoose": "^7.3.4",
+    "react-cookie": "^7.1.4",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "concurrently": "^8.2.1"
+    "concurrently": "^8.2.1",
+    "nodemon": "^3.1.2"
   }
 }

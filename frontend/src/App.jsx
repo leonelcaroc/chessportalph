@@ -6,6 +6,7 @@ import Admin from "./pages/Admin/Admin.jsx";
 import AdminLogin from "./pages/AdminLogin/AdminLogin.jsx";
 import NotFound from "./pages/NotFound/NotFound.jsx";
 import ContactUs from "./pages/ContactUs/ContactUs.jsx";
+import axios from "axios";
 
 const App = () => {
   return (
