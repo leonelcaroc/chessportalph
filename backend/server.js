@@ -6,7 +6,6 @@ dotenv.config();
 import cookieParser from "cookie-parser";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
-const PORT = 5000;
 import userRoutes from "./routes/userRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 
@@ -41,6 +40,6 @@ if (process.env.NODE_ENV === "production") {
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
