@@ -21,6 +21,16 @@ class AdminService {
     }
   }
 
+  static async getPlayers(search, page, limit) {
+    try {
+      const response = await adminApi.get("/");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching players:", error);
+      throw error;
+    }
+  }
+
   static async loginAdmin(payload) {
     try {
       const response = await adminApi.post("/auth", payload, {

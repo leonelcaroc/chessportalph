@@ -17,7 +17,6 @@ import { useCookies } from "react-cookie";
 const AdminLogin = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const [cookies, setCookie] = useCookies(["jwt"]);
   const [show, setShow] = useState(false);
   const [loginData, setLoginData] = useState({
     email: "",
@@ -34,13 +33,10 @@ const AdminLogin = () => {
         isClosable: true,
         position: "bottom-right",
       });
-      setCookie("jwt", data.token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60,
-      });
-      // navigate("/admin");
+
+      localStorage.setItem("adminInfo", JSON.stringify(data.data));
+
+      navigate("/admin");
     },
     onError: (error) => {
       toast({

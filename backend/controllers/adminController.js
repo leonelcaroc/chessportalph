@@ -8,10 +8,16 @@ const authAdmin = asyncHandler(async (req, res) => {
   const user = await Admin.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
-    return res
-      .status(200)
-      .json({ status: "success", message: "Successfully login!" });
+    const token = generateToken(res, user._id);
+    return res.status(200).json({
+      status: "success",
+      message: "Successfully login!",
+      data: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        token: token,
+      },
+    });
   } else {
     res
       .status(401)
