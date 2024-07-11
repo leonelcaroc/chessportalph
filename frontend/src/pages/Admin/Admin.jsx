@@ -41,93 +41,46 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { useRef, useState } from "react";
-import images from "../../utils";
+import { useEffect, useRef, useState } from "react";
+import images from "../../imagesList";
 import EditPlayer from "../../components/EditPlayer/EditPlayer";
+import AdminSidePanel from "../../layout/AdminSidePanel/AdminSidePanel";
+import AdminService from "../../services/adminService";
+import { useQuery, useQueryClient } from "react-query";
 
 const Admin = () => {
-  const data = Array.from({ length: 10 }, (_, index) => index + 1);
+  const sampleData = Array.from({ length: 10 }, (_, index) => index + 1);
   const [activeButton, setActiveButton] = useState(0);
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(10);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = useRef();
+  // const btnRef = useRef();
 
-  const handleClick = (buttonIndex) => {
-    setActiveButton(buttonIndex);
-  };
+  const { data: allPlayers, isLoading: isLoadingPlayers } = useQuery(
+    "players",
+    () => AdminService.getPlayers(page, limit),
+    {
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: error.response.data.message || "Something went wrong.",
+          status: error.response.data.status,
+          duration: 3000,
+          isClosable: true,
+          position: "bottom-right",
+        });
+      },
+    }
+  );
 
   return (
     <>
       <Flex minHeight="100vh" backgroundColor="#F3F3F3">
-        <Flex
-          backgroundColor="#F3F3F3"
-          minW="15rem"
-          borderRight="1.5px solid #d6d6d6"
-          py="1.5rem"
-          px="1rem"
-          flexDirection="column"
-          alignItems="center"
-        >
-          <Box boxSize="5rem" mb="4rem">
-            <Image src={images.mainlogo} alt="Dan Abramov" />
-          </Box>
-          <Flex flexDirection="column" gap="5px" width="100%">
-            <Flex
-              justifyContent="center"
-              px="1rem"
-              py="0.6rem"
-              borderRadius="10px"
-              cursor="pointer"
-              transition="ease-in 100ms"
-              bgColor={activeButton === 0 ? "#3182ce" : "#F3F3F3"}
-              color={activeButton === 0 ? "neutral.100" : "#000000"}
-              onClick={() => handleClick(0)}
-              _hover={
-                activeButton === 0
-                  ? null
-                  : { bgColor: "gray.300", transition: "ease" }
-              }
-            >
-              Dashboard
-            </Flex>
-            <Flex
-              justifyContent="center"
-              px="1rem"
-              py="0.6rem"
-              borderRadius="10px"
-              cursor="pointer"
-              transition="ease-in 100ms"
-              bgColor={activeButton === 1 ? "#3182ce" : "#F3F3F3"}
-              color={activeButton === 1 ? "neutral.100" : "#000000"}
-              onClick={() => handleClick(1)}
-              _hover={
-                activeButton === 1
-                  ? null
-                  : { bgColor: "gray.300", transition: "ease" }
-              }
-            >
-              Tournaments
-            </Flex>
-            <Flex
-              justifyContent="center"
-              px="1rem"
-              py="0.6rem"
-              borderRadius="10px"
-              cursor="pointer"
-              transition="ease-in 100ms"
-              bgColor={activeButton === 2 ? "#3182ce" : "#F3F3F3"}
-              color={activeButton === 2 ? "neutral.100" : "#000000"}
-              onClick={() => handleClick(2)}
-              _hover={
-                activeButton === 2
-                  ? null
-                  : { bgColor: "gray.300", transition: "ease" }
-              }
-            >
-              Players
-            </Flex>
-          </Flex>
-        </Flex>
+        <AdminSidePanel
+          activeButton={activeButton}
+          setActiveButton={setActiveButton}
+        />
 
         <Flex flexDirection="column" flex="1">
           <Flex
@@ -150,10 +103,10 @@ const Admin = () => {
 
               <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                  Edward
+                  Edward s
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>Logout</MenuItem>
+                  <MenuItem>Logout ow</MenuItem>
                 </MenuList>
               </Menu>
             </Stack>
@@ -224,28 +177,28 @@ const Admin = () => {
                     <Th>Standard</Th>
                     <Th>Rapid</Th>
                     <Th>Blitz</Th>
-                    <Th>F-60</Th>
+                    {/* <Th>F-60</Th> */}
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data.map((item) => (
+                  {allPlayers?.items.map((item) => (
                     <Tr
-                      key={item}
+                      key={item._id}
                       cursor="pointer"
                       _hover={{ bgColor: "gray.300" }}
-                      ref={btnRef}
+                      // ref={btnRef}
                       onClick={onOpen}
                     >
-                      <Td>A03353</Td>
-                      <Td>GM</Td>
-                      <Td>CAROC</Td>
-                      <Td>Leonel</Td>
-                      <Td>Male</Td>
-                      <Td>PHI</Td>
-                      <Td>1636</Td>
-                      <Td>1636</Td>
-                      <Td>1636</Td>
-                      <Td>1636</Td>
+                      <Td>{item.ID_No}</Td>
+                      <Td>{item.TITLE}</Td>
+                      <Td>{item.SURNAME}</Td>
+                      <Td>{item.NAME}</Td>
+                      <Td>{item.SEX}</Td>
+                      <Td>{item.Fed}</Td>
+                      <Td>{item.STD_}</Td>
+                      <Td>{item.Rapid}</Td>
+                      <Td>{item.Blitz}</Td>
+                      {/* <Td>{item}</Td> */}
                     </Tr>
                   ))}
                 </Tbody>
@@ -277,7 +230,11 @@ const Admin = () => {
           </Flex>
         </Flex>
       </Flex>
-      <EditPlayer ref={btnRef} isOpen={isOpen} onClose={onClose} />
+      <EditPlayer
+        // ref={btnRef}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
     </>
   );
 };

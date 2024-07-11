@@ -4,7 +4,6 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import cors from "cors";
 dotenv.config();
-import cookieParser from "cookie-parser";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -26,7 +25,7 @@ const corsOptions = {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(cors(corsOptions));
 
 app.use("/api/users", userRoutes);

@@ -1,24 +1,14 @@
 import { create } from "zustand";
-import AdminService from "../services/adminService";
 
 const useAdminStore = create((set) => ({
-  adminData: localStorage.getItem("adminData")
-    ? JSON.parse(localStorage.getItem("adminData"))
+  adminData: localStorage.getItem("adminInfo")
+    ? JSON.parse(localStorage.getItem("adminInfo"))
     : null,
-  login: async (username, password) => {
-    try {
-      const adminData = await AdminService.loginAdmin({ username, password });
-      set({ adminData });
-      localStorage.setItem("adminData", JSON.stringify(adminData));
-      return adminData;
-    } catch (error) {
-      console.error("Error logging in admin:", error);
-      throw error;
-    }
+  setCredentials: (data) => {
+    localStorage.setItem("adminInfo", JSON.stringify(data));
   },
   logout: () => {
-    set({ adminData: null });
-    localStorage.removeItem("adminData");
+    localStorage.removeItem("adminInfo");
   },
 }));
 

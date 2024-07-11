@@ -1,6 +1,9 @@
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import Admin from "../models/adminModel.js";
+import Search from "../models/searchQueryModel.js";
+import { ObjectId } from "mongodb";
+import Joi from "joi";
 
 const authAdmin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -8,14 +11,17 @@ const authAdmin = asyncHandler(async (req, res) => {
   const user = await Admin.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
-    const token = generateToken(res, user._id);
+    // generateToken(res, user._id);
+    const myToken = generateToken(res, user._id);
     return res.status(200).json({
       status: "success",
       message: "Successfully login!",
-      data: {
+      adminInfo: {
+        _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
-        token: token,
+        email: user.email,
+        token: myToken,
       },
     });
   } else {
@@ -28,10 +34,12 @@ const authAdmin = asyncHandler(async (req, res) => {
 });
 
 const registerAdmin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, firstName, lastName } = req.body;
   // const email = "leonelcaroc25@gmail.com";
   // const email = "ycppap.inc@yahoo.com";
   // const password = "123123123";
+  // const firstName = "Edward";
+  // const lastName = "Serrano";
 
   const userExists = await Admin.findOne({ email: email });
 
@@ -43,6 +51,8 @@ const registerAdmin = asyncHandler(async (req, res) => {
   const user = await Admin.create({
     email,
     password,
+    firstName,
+    lastName,
   });
 
   if (user) {
@@ -102,10 +112,81 @@ const updateAdminProfile = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Update user profile" });
 });
 
+const getPlayers = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 10, search } = req.query;
+
+  if (page < 1) page = 1;
+
+  const schema = Joi.object({
+    page: Joi.number().required(),
+    limit: Joi.number().required(),
+    search: Joi.string().allow("").required(),
+  });
+
+  const { error } = schema.validate({ page, limit, search });
+  if (error) {
+    return res.status(400).json({ status: "error", message: error.message });
+  }
+
+  let defaultQuery = {};
+  if (search) {
+    defaultQuery = {
+      $or: [
+        { SURNAME: { $regex: search, $options: "i" } },
+        { NAME: { $regex: search, $options: "i" } },
+        { ID_No: { $regex: search, $options: "i" } },
+      ],
+    };
+  }
+
+  const skip = (page - 1) * limit;
+
+  try {
+    const length = await Search.countDocuments({ ...defaultQuery });
+    const items = await Search.find({ ...defaultQuery })
+      .skip(parseInt(skip))
+      .limit(parseInt(limit));
+    const totalPage = Math.ceil(length / limit);
+
+    res.status(200).json({
+      items: items,
+      page: page,
+      totalPage: totalPage,
+      totalItems: length,
+    });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: "An error occurred" });
+  }
+});
+
+const getPlayerById = asyncHandler(async (req, res) => {
+  const { id } = req.query;
+
+  const schema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { error } = schema.validate({ id });
+  if (error) {
+    return res.status(400).json({ status: "error", message: error.message });
+  }
+
+  const player = await Search.findOne({ _id: new ObjectId(id) });
+  if (!player) {
+    return res
+      .status(404)
+      .json({ status: "error", message: "Player is not existing." });
+  }
+
+  return res.status(200).json(player);
+});
+
 export {
   authAdmin,
   registerAdmin,
   logoutAdmin,
   getAdminProfile,
   updateAdminProfile,
+  getPlayers,
+  getPlayerById,
 };

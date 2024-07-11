@@ -9,14 +9,15 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { useMutation, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import AdminService from "../../services/adminService";
 import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
+import useAdminStore from "../../store/store";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const { setCredentials } = useAdminStore();
   const [show, setShow] = useState(false);
   const [loginData, setLoginData] = useState({
     email: "",
@@ -33,8 +34,7 @@ const AdminLogin = () => {
         isClosable: true,
         position: "bottom-right",
       });
-
-      localStorage.setItem("adminInfo", JSON.stringify(data.data));
+      setCredentials(data.adminInfo);
 
       navigate("/admin");
     },

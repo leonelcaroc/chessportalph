@@ -1,4 +1,5 @@
 import { adminApi } from "./api";
+import TokenService from "../services/tokenService";
 
 class AdminService {
   static async createAdmin(payload) {
@@ -69,6 +70,38 @@ class AdminService {
       return response.data;
     } catch (error) {
       console.error("Error deleting admin:", error);
+      throw error;
+    }
+  }
+
+  static async getPlayers(search, page, limit) {
+    const token = JSON.parse(localStorage.getItem("adminInfo")).token;
+
+    try {
+      const response = await adminApi.get("/players", {
+        params: {
+          search: search,
+          page: page,
+          limit: limit,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching players:", error);
+      throw error;
+    }
+  }
+
+  static async getPlayerById(id) {
+    try {
+      const response = await adminApi.get(`/players/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching player:", error);
       throw error;
     }
   }

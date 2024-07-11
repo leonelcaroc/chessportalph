@@ -14,16 +14,14 @@ import {
   DrawerCloseButton,
   DrawerOverlay,
   Select,
-  useDisclosure,
 } from "@chakra-ui/react";
 
-function EditPlayer({ ref, isOpen, onClose }) {
+function EditPlayer({ ref, isOpen, onClose, player, setPlayer }) {
   return (
     <>
-      <Drawer isOpen={isOpen} placement="right" finalFocusRef={ref} size="sm">
+      <Drawer isOpen={isOpen} placement="right" size="sm">
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton onClick={() => onClose()} />
           <DrawerHeader>Edit Player</DrawerHeader>
 
           <DrawerBody>
@@ -32,53 +30,140 @@ function EditPlayer({ ref, isOpen, onClose }) {
                 <Flex flexDirection="column" gap="1rem">
                   <Box>
                     <Text>Local ID</Text>
-                    <Input value="A03656" />
+                    <Input
+                      defaultValue={player?.ID_No}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          ID_No: e.target.value,
+                        }))
+                      }
+                    />
                   </Box>
                   <Box>
                     <Text>Title</Text>
-                    <Select placeholder="Select option" value="nm">
-                      <option value="nm">NM</option>
-                      <option value="cm">CM</option>
-                      <option value="fm">FM</option>
-                      <option value="im">IM</option>
-                      <option value="gm">GM</option>
+                    <Select
+                      placeholder="Select option"
+                      defaultValue={player?.TITLE}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          TITLE: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value="NM">NM</option>
+                      <option value="CM">CM</option>
+                      <option value="FM">FM</option>
+                      <option value="IM">IM</option>
+                      <option value="GM">GM</option>
+                      <option value="ACM">ACM</option>
+                      <option value="AFM">AFM</option>
+                      <option value="AIM">AIM</option>
+                      <option value="AGM">AGM</option>
                     </Select>
                   </Box>
 
                   <Box>
                     <Text>First Name</Text>
-                    <Input value="Leonel" />
+                    <Input
+                      defaultValue={player?.NAME}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          NAME: e.target.value,
+                        }))
+                      }
+                    />
                   </Box>
                   <Box>
                     <Text>Last Name</Text>
-                    <Input value="Caroc" />
+                    <Input
+                      defaultValue={player?.SURNAME}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          SURNAME: e.target.value,
+                        }))
+                      }
+                    />
                   </Box>
                   <Box>
                     <Text>Gender</Text>
-                    <Select placeholder="Select option" value="male">
-                      <option value="male">Male</option>
+                    <Select
+                      placeholder="Select option"
+                      value={player?.SEX}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          SEX: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value="">Male</option>
                       <option value="female">Female</option>
                     </Select>
                   </Box>
                   <Box>
                     <Text>Federation</Text>
-                    <Input placeholder="Enter Federation" value="PHI" />
+                    <Input
+                      placeholder="Enter Federation"
+                      defaultValue={player?.Fed}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          Fed: e.target.value,
+                        }))
+                      }
+                    />
                   </Box>
                   <Box>
                     <Text>Standard</Text>
-                    <Input value="2048" />
+                    <Input
+                      defaultValue={player?.STD_}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          STD_: e.target.value,
+                        }))
+                      }
+                    />
                   </Box>
                   <Box>
                     <Text>Rapid</Text>
-                    <Input value="2048" />
+                    <Input
+                      defaultValue={player?.Rapid}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          Rapid: e.target.value,
+                        }))
+                      }
+                    />
                   </Box>
                   <Box>
                     <Text>Blitz</Text>
-                    <Input value="2048" />
+                    <Input
+                      defaultValue={player?.Blitz}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          Blitz: e.target.value,
+                        }))
+                      }
+                    />
                   </Box>
                   <Box>
                     <Text>Fischer Random</Text>
-                    <Input defaultValue="2048" />
+                    <Input
+                      defaultValue={player?.["F-960"]}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          "F-960": e.target.value,
+                        }))
+                      }
+                    />
                   </Box>
                 </Flex>
               </CardBody>
@@ -86,10 +171,19 @@ function EditPlayer({ ref, isOpen, onClose }) {
           </DrawerBody>
 
           <DrawerFooter>
-            <Button variant="outline" mr={3} onClick={onClose}>
+            <Button
+              variant="outline"
+              mr={3}
+              onClick={() => {
+                setPlayer(null);
+                onClose();
+              }}
+            >
               Cancel
             </Button>
-            <Button colorScheme="blue">Save</Button>
+            <Button colorScheme="blue" onClick={() => console.log(player)}>
+              Save
+            </Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
