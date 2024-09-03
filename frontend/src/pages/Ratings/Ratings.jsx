@@ -128,7 +128,7 @@ const Ratings = () => {
           fontSize={isLowerThan540 ? "1rem" : "1.2rem"}
           whiteSpace="nowrap"
         >
-          {isLowerThan355 ? "(August 2024)" : "(based on August 2024)"}
+          {isLowerThan355 ? "(September 2024)" : "(based on September 2024)"}
         </Text>
       </Flex>
       <Flex marginBlock="1rem">
