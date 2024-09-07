@@ -1,38 +1,60 @@
 import asyncHandler from "express-async-handler";
 import Search from "../models/searchQueryModel.js";
+import Joi from "joi";
 
-// desc     Search query player profile
+// desc     Search player/s
 // route    GET /api/search
 // @access  Public
-const getPlayerProfile = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, query } = req.query;
+const getSearchPlayer = asyncHandler(async (req, res) => {
+  const { limit = 10, query } = req.query;
+  let { page = 1 } = req.query;
+  // let customPage = 0;
+  // if (page < 1) customPage = 1;
 
-  // // Verify if the search query is empty
-  if (!query) {
-    return res.status(400).json({ error: "Search query is required" });
+  const schema = Joi.object({
+    page: Joi.number().required().min(0),
+    limit: Joi.number().required().min(10),
+    query: Joi.string().allow("").required(),
+  });
+
+  const { error } = schema.validate({ page, limit, query });
+  if (error) {
+    return res.status(400).json({ status: "error", message: error.message });
   }
 
-  // Calculate skip and limit values for MongoDB query
+  if (page < 0) {
+    page = 1;
+  }
+
+  let defaultQuery = {};
+  if (query) {
+    defaultQuery = {
+      $or: [
+        { SURNAME: { $regex: query, $options: "i" } },
+        { NAME: { $regex: query, $options: "i" } },
+        { ID_No: { $regex: query, $options: "i" } },
+      ],
+    };
+  }
+
   const skip = (page - 1) * limit;
 
-  // Create a MongoDB query to retrieve a specific page of results
-  const searchQuery = {
-    $or: [
-      { ID_No: { $regex: query, $options: "i" } },
-      { SURNAME: { $regex: query, $options: "i" } },
-      { NAME: { $regex: query, $options: "i" } },
-    ],
-  };
-
   try {
-    const results = await Search.find(searchQuery)
+    const length = await Search.countDocuments({ ...defaultQuery });
+    const items = await Search.find({ ...defaultQuery })
       .skip(parseInt(skip))
       .limit(parseInt(limit));
+    const totalPage = Math.ceil(length / limit);
 
-    res.json(results);
+    res.status(200).json({
+      items: items,
+      page: page,
+      totalPage: totalPage,
+      totalItems: length,
+    });
   } catch (error) {
     res.status(500).json({ error: "An error occurred" });
   }
 });
 
-export { getPlayerProfile };
+export { getSearchPlayer };

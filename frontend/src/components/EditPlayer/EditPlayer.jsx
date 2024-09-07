@@ -17,6 +17,20 @@ import {
 } from "@chakra-ui/react";
 
 function EditPlayer({ ref, isOpen, onClose, player, setPlayer }) {
+  // const [month, day, year] = player?.["B-day"]?.split("/");
+  // const defaultDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
+  //   2,
+  //   "0"
+  // )}`;
+
+  let defaultDate = "";
+  if (player?.["B-day"]) {
+    const [month, day, year] = player?.["B-day"]?.split("/");
+    if (month && day && year) {
+      defaultDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+  }
+
   return (
     <>
       <Drawer isOpen={isOpen} placement="right" size="sm">
@@ -92,7 +106,7 @@ function EditPlayer({ ref, isOpen, onClose, player, setPlayer }) {
                     <Text>Gender</Text>
                     <Select
                       placeholder="Select option"
-                      value={player?.SEX}
+                      defaultValue={player?.SEX === "F" ? "F" : "M"}
                       onChange={(e) =>
                         setPlayer((prev) => ({
                           ...prev,
@@ -100,10 +114,24 @@ function EditPlayer({ ref, isOpen, onClose, player, setPlayer }) {
                         }))
                       }
                     >
-                      <option value="">Male</option>
-                      <option value="female">Female</option>
+                      <option value="M">Male</option>
+                      <option value="F">Female</option>
                     </Select>
                   </Box>
+                  <Box>
+                    <Text>Date of Birth</Text>
+                    <Input
+                      type="date"
+                      defaultValue={defaultDate}
+                      onChange={(e) =>
+                        setPlayer((prev) => ({
+                          ...prev,
+                          "B-day": e.target.value,
+                        }))
+                      }
+                    />
+                  </Box>
+
                   <Box>
                     <Text>Federation</Text>
                     <Input

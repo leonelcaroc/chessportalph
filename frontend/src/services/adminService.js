@@ -22,15 +22,15 @@ class AdminService {
     }
   }
 
-  static async getPlayers(search, page, limit) {
-    try {
-      const response = await adminApi.get("/");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching players:", error);
-      throw error;
-    }
-  }
+  // static async getPlayers(search, page, limit) {
+  //   try {
+  //     const response = await adminApi.get("/");
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error("Error fetching players:", error);
+  //     throw error;
+  //   }
+  // }
 
   static async loginAdmin(payload) {
     try {
@@ -102,6 +102,16 @@ class AdminService {
       return response.data;
     } catch (error) {
       console.error("Error fetching player:", error);
+      throw error;
+    }
+  }
+
+  static async updatePlayerById(id) {
+    try {
+      const response = await adminApi.put(`/player/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating player:", error);
       throw error;
     }
   }

@@ -5,6 +5,7 @@ import {
   registerAdmin,
   getPlayers,
   getPlayerById,
+  updatePlayerById,
 } from "../controllers/adminController.js";
 import { protectAdmin } from "../middleware/authMiddleware.js";
 
@@ -16,6 +17,7 @@ router.get(
   // protectAdmin,
   getPlayerById
 );
+router.put("/player/:id", protectAdmin, updatePlayerById);
 // router.get("/players", protectAdmin, getPlayers);
 // router.post("/logout", logoutUser);
 

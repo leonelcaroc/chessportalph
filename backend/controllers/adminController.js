@@ -181,6 +181,55 @@ const getPlayerById = asyncHandler(async (req, res) => {
   return res.status(200).json(player);
 });
 
+const updatePlayerById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { payload } = req.body;
+
+  const schema = Joi.object({
+    _id: Joi.string().hex().required(),
+    payload: Joi.object({
+      ID_No: Joi.string().required(),
+      SURNAME: Joi.string().allow(""),
+      NAME: Joi.string().required(),
+      SEX: Joi.string().allow(""),
+      "B-Year": Joi.string()
+        .pattern(/^\d{4}$/)
+        .allow(""),
+      "B-day": Joi.string()
+        .pattern(/^\d{2}\/\d{2}\/\d{4}$/)
+        .allow(""),
+      Blitz: Joi.string().allow(""),
+      "F-960": Joi.string().allow(""),
+      Fed: Joi.string().allow(""),
+      Fide_No: Joi.string().allow(""),
+      "N-24": Joi.string().allow(""),
+      Rapid: Joi.string().allow(""),
+      STD_: Joi.string().allow(""),
+      TITLE: Joi.string().allow(""),
+      flag: Joi.string().allow(""),
+    }).required(),
+  });
+
+  const { error } = schema.validate({ id, payload });
+  if (error) {
+    return res.status(400).json({ status: "error", message: error.message });
+  }
+
+  const result = await Search.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: payload }
+  );
+  if (result.matchedCount === 0) {
+    return res
+      .status(404)
+      .json({ status: "error", message: "Player not found." });
+  }
+
+  return res
+    .status(200)
+    .json({ status: "success", message: "Player updated successfully." });
+});
+
 export {
   authAdmin,
   registerAdmin,
@@ -189,4 +238,5 @@ export {
   updateAdminProfile,
   getPlayers,
   getPlayerById,
+  updatePlayerById,
 };

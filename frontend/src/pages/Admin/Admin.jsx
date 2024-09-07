@@ -46,7 +46,7 @@ import images from "../../imagesList";
 import EditPlayer from "../../components/EditPlayer/EditPlayer";
 import AdminSidePanel from "../../layout/AdminSidePanel/AdminSidePanel";
 import AdminService from "../../services/adminService";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
 const Admin = () => {
   const sampleData = Array.from({ length: 10 }, (_, index) => index + 1);
@@ -73,6 +73,31 @@ const Admin = () => {
       },
     }
   );
+
+  const updatePlayerMutation = useMutation(AdminService.updatePlayerById(), {
+    onSuccess: (data) => {
+      toast({
+        title: "Login",
+        // description: data.message,
+        // status: data.status,
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Login",
+        // description: error.response.data.message || "Something went wrong.",
+        // status: error.response.data.status,
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+
+      console.log(error);
+    },
+  });
 
   return (
     <>

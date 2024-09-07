@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
-import { getPlayerProfile } from "../controllers/searchController.js";
+import { getSearchPlayer } from "../controllers/searchController.js";
 
-router.get("/ratings", getPlayerProfile);
+router.get("/ratings", getSearchPlayer);
 
 export default router;
