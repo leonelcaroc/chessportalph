@@ -60,13 +60,17 @@ const Admin = () => {
             </Text>
 
             <Stack direction="row" p={4} alignItems="center">
-              <Icon as={IoIosSearch} boxSize={6} />
-              <Icon as={IoIosHeart} boxSize={6} />
+              {/* <Icon as={IoIosSearch} boxSize={6} />
+              <Icon as={IoIosHeart} boxSize={6} /> */}
               <Icon as={IoIosNotifications} boxSize={6} />
               <Divider orientation="vertical" />
 
               <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                <MenuButton
+                  bgColor="blue.200"
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                >
                   {JSON.parse(localStorage.getItem("adminInfo")).firstName}
                 </MenuButton>
                 <MenuList>

@@ -6,6 +6,13 @@ const searchSchema = mongoose.Schema({
   ID_No: String,
   SURNAME: String,
   NAME: String,
+  SEX: String,
+  Fed: String,
+  TITLE: String,
+  STD_: String,
+  Rapid: String,
+  Blitz: String,
+  "F-960": String,
 });
 
 const Search = mongoose.model("Septembers", searchSchema);

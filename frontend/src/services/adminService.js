@@ -106,9 +106,31 @@ class AdminService {
     }
   }
 
-  static async updatePlayerById(id) {
+  static async updatePlayerById(payload) {
+    const {
+      SRtng,
+      RRtng,
+      BRtng,
+      flag,
+      _id,
+      SGm,
+      Sk,
+      Prv_S,
+      RGm,
+      Rk,
+      Prv_R,
+      BGm,
+      Bk,
+      Prv_B,
+      FGm,
+      Fk,
+      Prv_F,
+      "N-24": n24,
+      ...newPayload
+    } = payload;
+
     try {
-      const response = await adminApi.put(`/player/${id}`);
+      const response = await adminApi.put(`/player/${payload._id}`, newPayload);
       return response.data;
     } catch (error) {
       console.error("Error updating player:", error);

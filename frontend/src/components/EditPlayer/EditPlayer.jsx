@@ -16,12 +16,25 @@ import {
   Select,
 } from "@chakra-ui/react";
 
-function EditPlayer({ ref, isOpen, onClose, player, setPlayer }) {
+function EditPlayer({
+  ref,
+  isOpen,
+  onClose,
+  player,
+  setPlayer,
+  updatePlayerMutation,
+  isUpdatingPlayer,
+}) {
   // const [month, day, year] = player?.["B-day"]?.split("/");
   // const defaultDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
   //   2,
   //   "0"
   // )}`;
+
+  const handleUpdatePlayer = async (e) => {
+    e.preventDefault();
+    updatePlayerMutation(player);
+  };
 
   let defaultDate = "";
   if (player?.["B-day"]) {
@@ -75,6 +88,7 @@ function EditPlayer({ ref, isOpen, onClose, player, setPlayer }) {
                       <option value="AFM">AFM</option>
                       <option value="AIM">AIM</option>
                       <option value="AGM">AGM</option>
+                      <option value="none">none</option>
                     </Select>
                   </Box>
 
@@ -209,7 +223,11 @@ function EditPlayer({ ref, isOpen, onClose, player, setPlayer }) {
             >
               Cancel
             </Button>
-            <Button colorScheme="blue" onClick={() => console.log(player)}>
+            <Button
+              colorScheme="blue"
+              onClick={handleUpdatePlayer}
+              isLoading={isUpdatingPlayer}
+            >
               Save
             </Button>
           </DrawerFooter>

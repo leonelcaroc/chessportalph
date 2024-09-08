@@ -47,8 +47,7 @@ const AdminLogin = () => {
         isClosable: true,
         position: "bottom-right",
       });
-      // console.error("Error logging in:", error);
-      console.log(error);
+      console.error("Error logging in:", error);
     },
   });
 

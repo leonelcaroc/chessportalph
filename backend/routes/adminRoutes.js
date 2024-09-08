@@ -17,7 +17,7 @@ router.get(
   // protectAdmin,
   getPlayerById
 );
-router.put("/player/:id", protectAdmin, updatePlayerById);
+router.put("/player/:id", updatePlayerById);
 // router.get("/players", protectAdmin, getPlayers);
 // router.post("/logout", logoutUser);
 

@@ -18,6 +18,7 @@ import {
   Tbody,
   Td,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import {
   ChevronDownIcon,
@@ -26,15 +27,16 @@ import {
 } from "@chakra-ui/icons";
 import { TiArrowUnsorted } from "react-icons/ti";
 import { IoFilterSharp } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import AdminService from "../../services/adminService";
 import EditPlayer from "../../components/EditPlayer/EditPlayer";
 import { debounce } from "lodash";
 import { useDeferredValue } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { useCookies } from "react-cookie";
 
 const AdminPlayers = () => {
+  const toast = useToast();
   const [search, setSearch] = useState("");
   const [player, setPlayer] = useState(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -42,10 +44,12 @@ const AdminPlayers = () => {
   const [limit, setLimit] = useState(10);
   const [totalPage, setTotalPage] = useState(1);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const buttonRef = useRef(null);
 
   const {
     data: allPlayers,
     isLoading: isLoadingPlayers,
+    isFetching: isFetchingPlayers,
     refetch: refetchPlayers,
   } = useQuery(
     ["players", page],
@@ -69,6 +73,37 @@ const AdminPlayers = () => {
     }
   );
 
+  const {
+    data,
+    mutate,
+    mutateAsync,
+    isLoading: isUpdatingPlayer,
+  } = useMutation(AdminService.updatePlayerById, {
+    onSuccess: (data) => {
+      toast({
+        title: "Player",
+        description: data.message,
+        status: data.status,
+        duration: 1000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+
+      refetchPlayers();
+    },
+    onError: (error) => {
+      toast({
+        title: "Update Player Error",
+        description: error.response.data.message || "Something went wrong.",
+        status: error.response.data.status,
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+      console.error("Error logging in:", error);
+    },
+  });
+
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
@@ -84,7 +119,15 @@ const AdminPlayers = () => {
   const previewPlayer = (player) => {
     setPlayer(player);
     onOpen();
-    // console.log(id);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+
+      setPage(1);
+      buttonRef.current.click();
+    }
   };
 
   return (
@@ -100,14 +143,17 @@ const AdminPlayers = () => {
       >
         <InputGroup maxW="75%">
           <Input
-            type="search"
+            // type="search"
             placeholder="Enter player or id"
             value={search}
             onChange={handleSearchChange}
+            onKeyDown={handleKeyDown}
           />
           <InputRightElement width="4.5rem">
             <Button
               colorScheme="blue"
+              isLoading={isLoadingPlayers || isFetchingPlayers}
+              ref={buttonRef}
               onClick={() => {
                 setPage(1);
                 refetchPlayers();
@@ -134,7 +180,9 @@ const AdminPlayers = () => {
         <MenuItem>FED</MenuItem>
       </MenuList>
     </Menu> */}
-        <Menu>
+
+        {/* Sorting */}
+        {/* <Menu>
           <MenuButton
             as={Button}
             display="flex"
@@ -148,7 +196,7 @@ const AdminPlayers = () => {
             <MenuItem>A-Z</MenuItem>
             <MenuItem>Low to High</MenuItem>
           </MenuList>
-        </Menu>
+        </Menu> */}
       </Flex>
       <Box
         backgroundColor="#F3F3F3"
@@ -210,7 +258,7 @@ const AdminPlayers = () => {
           size="lg"
           icon={<ChevronLeftIcon />}
           onClick={handlePreviousPage}
-          isDisabled={isLoadingPlayers}
+          isDisabled={isLoadingPlayers || page <= 1}
         />
         Page {page} of {totalPage}
         <IconButton
@@ -227,6 +275,8 @@ const AdminPlayers = () => {
         onClose={onClose}
         player={player}
         setPlayer={setPlayer}
+        updatePlayerMutation={mutate}
+        isUpdatingPlayer={isUpdatingPlayer}
       />
     </>
   );
