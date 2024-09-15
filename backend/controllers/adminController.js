@@ -185,6 +185,20 @@ const updatePlayerById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const payload = req.body;
 
+  function convertDate(dateString) {
+    const dateParts = dateString.split("-");
+    const year = dateParts[0];
+    const month = dateParts[1];
+    const day = dateParts[2];
+
+    return `${month}/${day}/${year}`;
+  }
+
+  if (payload["B-day"]) {
+    payload["B-day"] = convertDate(payload["B-day"]);
+    payload["B-Year"] = payload["B-day"].split("/")[2];
+  }
+
   const schema = Joi.object({
     id: Joi.string().hex().required(),
     payload: Joi.object({
@@ -215,6 +229,14 @@ const updatePlayerById = asyncHandler(async (req, res) => {
 
   if (value.payload.TITLE === "none") {
     payload.TITLE = "";
+  }
+
+  if (value.payload.SEX === "M") {
+    payload.SEX = "";
+  }
+
+  if (value.payload["B-day"]) {
+    value.payload["B-Year"] = value.payload["B-day"].split("/")[2];
   }
 
   try {

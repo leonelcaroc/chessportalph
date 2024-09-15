@@ -13,6 +13,8 @@ const searchSchema = mongoose.Schema({
   Rapid: String,
   Blitz: String,
   "F-960": String,
+  "B-day": String,
+  "B-Year": String,
 });
 
 const Search = mongoose.model("Septembers", searchSchema);
