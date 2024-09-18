@@ -32,6 +32,7 @@ const Admin = () => {
   const { logout } = useAdminStore();
   const [activeButton, setActiveButton] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   // const btnRef = useRef();
 
   useEffect(() => {
@@ -65,7 +66,7 @@ const Admin = () => {
               <Icon as={IoIosNotifications} boxSize={6} />
               <Divider orientation="vertical" />
 
-              <Menu>
+              <Menu closeOnSelect={false}>
                 <MenuButton
                   bgColor="blue.200"
                   as={Button}
@@ -74,13 +75,21 @@ const Admin = () => {
                   {JSON.parse(localStorage.getItem("adminInfo")).firstName}
                 </MenuButton>
                 <MenuList>
-                  <MenuItem
-                    onClick={() => {
-                      logout();
-                      navigate("/adminlogin");
-                    }}
-                  >
-                    Logout
+                  <MenuItem p="0">
+                    <Button
+                      isLoading={isLoggingOut}
+                      width="full"
+                      onClick={() => {
+                        setIsLoggingOut(true);
+                        setTimeout(() => {
+                          setIsLoggingOut(false);
+                          logout();
+                          navigate("/adminlogin");
+                        }, 1000);
+                      }}
+                    >
+                      Logout
+                    </Button>
                   </MenuItem>
                 </MenuList>
               </Menu>

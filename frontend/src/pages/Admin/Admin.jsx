@@ -128,10 +128,10 @@ const Admin = () => {
 
               <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                  Edward s
+                  Edward
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>Logout ow</MenuItem>
+                  <MenuItem>Logout</MenuItem>
                 </MenuList>
               </Menu>
             </Stack>

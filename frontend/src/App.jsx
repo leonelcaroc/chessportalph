@@ -10,21 +10,34 @@ import AdminLayout from "./layout/AdminLayout.jsx";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
 import AdminPlayers from "./pages/AdminPlayers/AdminPlayers.jsx";
 import AdminTournaments from "./pages/AdminTournaments/AdminTournaments.jsx";
+import GuardRoute from "./privateRoute/GuardRoute.jsx";
+import PrivateRoute from "./privateRoute/PrivateRoute.jsx";
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route index={true} element={<Home />} />
-        <Route path="ratings" element={<Ratings />} />
-        {/* <Route path="contactus" element={<ContactUs />} /> */}
+      <Route
+        path=""
+        element={<PrivateRoute adminInfo="adminInfo" navigateRoute="/admin" />}
+      >
+        <Route path="/" element={<MainLayout />}>
+          <Route index={true} element={<Home />} />
+          <Route path="ratings" element={<Ratings />} />
+          {/* <Route path="contactus" element={<ContactUs />} /> */}
+        </Route>
+        <Route path="adminlogin" element={<AdminLogin />} />
       </Route>
-      <Route path="adminlogin" element={<AdminLogin />} />
-      <Route path="admin" element={<AdminLayout />}>
-        <Route index element={<Navigate to="players" />} />
-        {/* <Route path="dashboard" element={<AdminDashboard />} /> */}
-        <Route path="players" element={<AdminPlayers />} />
-        {/* <Route path="tournaments" element={<AdminTournaments />} /> */}
+
+      <Route
+        path=""
+        element={<GuardRoute adminInfo="adminInfo" navigateLoginRoute="/" />}
+      >
+        <Route path="admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="players" />} />
+          {/* <Route path="dashboard" element={<AdminDashboard />} /> */}
+          <Route path="players" element={<AdminPlayers />} />
+          {/* <Route path="tournaments" element={<AdminTournaments />} /> */}
+        </Route>
       </Route>
 
       <Route path="*" element={<NotFound />} />

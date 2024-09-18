@@ -6,28 +6,71 @@ import Joi from "joi";
 // route    GET /api/search
 // @access  Public
 const getSearchPlayer = asyncHandler(async (req, res) => {
-  const { limit = 10, query } = req.query;
+  const { limit = 10, query, firstname, lastname, localId, title } = req.query;
   let { page = 1 } = req.query;
-  // let customPage = 0;
-  // if (page < 1) customPage = 1;
+  let gender = req.query.gender;
+  const isAdvanceSearch = req.query.isAdvanceSearch === "true";
 
   const schema = Joi.object({
     page: Joi.number().required().min(0),
     limit: Joi.number().required().min(10),
-    query: Joi.string().allow("").required(),
+    isAdvanceSearch: Joi.boolean().required(),
+    query: Joi.string().allow("").when("isAdvanceSearch", {
+      is: false,
+      then: Joi.string().required(),
+      otherwise: Joi.string().optional(),
+    }),
+    query: Joi.string().allow("").optional(),
+    firstname: Joi.string().allow("").optional(),
+    lastname: Joi.string().allow("").optional(),
+    localId: Joi.string().allow("").optional(),
+    gender: Joi.string().valid("male", "female", "").optional(),
+    title: Joi.string().allow("").optional(),
   });
 
-  const { error } = schema.validate({ page, limit, query });
+  const { error } = schema.validate({
+    page,
+    limit,
+    isAdvanceSearch,
+    query,
+    firstname,
+    lastname,
+    localId,
+    gender,
+    title,
+  });
   if (error) {
     return res.status(400).json({ status: "error", message: error.message });
   }
 
-  if (page < 0) {
+  if (page < 1) {
     page = 1;
   }
 
   let defaultQuery = {};
-  if (query) {
+
+  if (isAdvanceSearch) {
+    if (gender === "male") {
+      gender = "";
+      defaultQuery.SEX = gender;
+    } else if (gender === "female") {
+      gender = "F";
+      defaultQuery.SEX = gender;
+    }
+
+    if (firstname) {
+      defaultQuery.NAME = { $regex: firstname, $options: "i" };
+    }
+    if (lastname) {
+      defaultQuery.SURNAME = { $regex: lastname, $options: "i" };
+    }
+    if (localId) {
+      defaultQuery.ID_No = { $regex: localId, $options: "i" };
+    }
+    if (title) {
+      defaultQuery.TITLE = title.toUpperCase();
+    }
+  } else {
     defaultQuery = {
       $or: [
         { SURNAME: { $regex: query, $options: "i" } },
@@ -36,6 +79,8 @@ const getSearchPlayer = asyncHandler(async (req, res) => {
       ],
     };
   }
+
+  console.log(defaultQuery);
 
   const skip = (page - 1) * limit;
 

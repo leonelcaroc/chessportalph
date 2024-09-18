@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const PrivateRoute = ({ clientInfo, navigateRoute }) => {
-  return localStorage.getItem(clientInfo) ? (
+const PrivateRoute = ({ adminInfo, navigateRoute }) => {
+  return localStorage.getItem(adminInfo) ? (
     <Navigate to={navigateRoute} replace />
   ) : (
     <Outlet />

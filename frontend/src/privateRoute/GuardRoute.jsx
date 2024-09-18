@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const GuardRoute = ({ clientInfo, navigateLoginRoute }) => {
-  return localStorage.getItem(clientInfo) ? (
+const GuardRoute = ({ adminInfo, navigateLoginRoute }) => {
+  return localStorage.getItem(adminInfo) ? (
     <Outlet />
   ) : (
     <Navigate to={navigateLoginRoute} replace />

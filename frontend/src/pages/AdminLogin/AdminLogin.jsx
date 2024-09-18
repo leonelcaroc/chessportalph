@@ -18,6 +18,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { setCredentials } = useAdminStore();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [show, setShow] = useState(false);
   const [loginData, setLoginData] = useState({
     email: "",
@@ -61,7 +62,11 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    loginMutation.mutate(loginData);
+    setIsLoggingIn(true);
+    setTimeout(() => {
+      setIsLoggingIn(false);
+      loginMutation.mutate(loginData);
+    }, 1000);
   };
 
   return (
@@ -142,6 +147,7 @@ const AdminLogin = () => {
           bgColor="blue.100"
           _hover={{ bgColor: "blue.800", color: "#fff" }}
           onClick={handleLogin}
+          isLoading={isLoggingIn}
         >
           Sign In
         </Button>
