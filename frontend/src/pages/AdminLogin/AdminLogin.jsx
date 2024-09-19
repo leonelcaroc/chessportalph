@@ -75,7 +75,7 @@ const AdminLogin = () => {
       width="100%"
       justifyContent="center"
       alignItems="center"
-      backgroundImage="https://images.unsplash.com/photo-1585038021831-8afd9f9ab27f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      backgroundImage="https://res.cloudinary.com/db5qufd8v/image/upload/v1726756244/bg_chess_portal_adminlogin_j6bbb5.avif"
     >
       <Flex
         flexDir="column"

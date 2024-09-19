@@ -3,9 +3,11 @@ import axios from "axios";
 
 const adminRoute = "admin";
 
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+
 // Create an axios instance with a base URL
 const api = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
   },
