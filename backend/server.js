@@ -14,7 +14,21 @@ connectDB();
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    useDefaults: true,
+    directives: {
+      "img-src": [
+        "https://chessportalph.org",
+        "https://res.cloudinary.com/",
+
+        "data:",
+      ],
+      upgradeInsecureRequests: [],
+    },
+    reportOnly: false,
+  })
+);
 app.disable("x-powered-by");
 
 const corsOptions = {
