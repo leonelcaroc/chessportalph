@@ -6,9 +6,9 @@ import { ObjectId } from "mongodb";
 import Joi from "joi";
 
 const authAdmin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  const user = await Admin.findOne({ email });
+  const user = await Admin.findOne({ username });
 
   if (user && (await user.matchPassword(password))) {
     // generateToken(res, user._id);
@@ -27,17 +27,17 @@ const authAdmin = asyncHandler(async (req, res) => {
   } else {
     res
       .status(401)
-      .json({ status: "error", message: "Invalid email or password" });
+      .json({ status: "error", message: "Invalid username or password" });
 
-    throw new Error("Invalid email or password.");
+    throw new Error("Invalid username or password.");
   }
 });
 
 const registerAdmin = asyncHandler(async (req, res) => {
-  const { email, password, firstName, lastName } = req.body;
+  const { username, email, password, firstName, lastName } = req.body;
   // const email = "leonelcaroc25@gmail.com";
   // const email = "ycppap.inc@yahoo.com";
-  // const password = "123123123";
+  // const password = "luca500";
   // const firstName = "Edward";
   // const lastName = "Serrano";
 
@@ -49,6 +49,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
   }
 
   const user = await Admin.create({
+    username,
     email,
     password,
     firstName,

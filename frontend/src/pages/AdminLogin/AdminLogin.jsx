@@ -21,7 +21,7 @@ const AdminLogin = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [show, setShow] = useState(false);
   const [loginData, setLoginData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -98,10 +98,10 @@ const AdminLogin = () => {
         <Flex flexDir="column" gap="1rem">
           <Input
             color="#fff"
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={loginData.email}
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={loginData.username}
             onChange={handleChange}
             _focusVisible={{ borderColor: "none", boxShadow: "none" }}
           />

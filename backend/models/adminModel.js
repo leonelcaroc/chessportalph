@@ -19,13 +19,10 @@ const adminSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  firstName: {
+  username: {
     type: String,
     required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
+    unique: true,
   },
 });
 
