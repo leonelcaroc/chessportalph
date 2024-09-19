@@ -5,12 +5,69 @@ import {
   InputGroup,
   InputRightAddon,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import AdminService from "../../services/adminService";
+import { useNavigate } from "react-router-dom";
+import useAdminStore from "../../store/store";
 
 const AdminLogin = () => {
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { setCredentials } = useAdminStore();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [show, setShow] = useState(false);
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const loginMutation = useMutation(AdminService.loginAdmin, {
+    onSuccess: (data) => {
+      toast({
+        title: "Login",
+        description: data.message,
+        status: data.status,
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+      setCredentials(data.adminInfo);
+
+      navigate("/admin");
+    },
+    onError: (error) => {
+      toast({
+        title: "Login",
+        description: error.response.data.message || "Something went wrong.",
+        status: error.response.data.status,
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+      console.error("Error logging in:", error);
+    },
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setLoginData({
+      ...loginData,
+      [name]: value,
+    });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    setTimeout(() => {
+      setIsLoggingIn(false);
+      loginMutation.mutate(loginData);
+    }, 1000);
+  };
 
   return (
     <Flex
@@ -42,14 +99,20 @@ const AdminLogin = () => {
           <Input
             color="#fff"
             type="email"
+            name="email"
             placeholder="Email"
+            value={loginData.email}
+            onChange={handleChange}
             _focusVisible={{ borderColor: "none", boxShadow: "none" }}
           />
           <InputGroup>
             <Input
               color="#fff"
               type={show ? "text" : "password"}
+              name="password"
               placeholder="Password"
+              value={loginData.password}
+              onChange={handleChange}
               borderRight="none"
               _focusVisible={{ borderColor: "none", boxShadow: "none" }}
             />
@@ -83,6 +146,8 @@ const AdminLogin = () => {
         <Button
           bgColor="blue.100"
           _hover={{ bgColor: "blue.800", color: "#fff" }}
+          onClick={handleLogin}
+          isLoading={isLoggingIn}
         >
           Sign In
         </Button>

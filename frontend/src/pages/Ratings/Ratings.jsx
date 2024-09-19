@@ -13,15 +13,21 @@
 /* eslint-disable no-unused-vars */
 import {
   Button,
+  ButtonGroup,
+  Collapse,
   Flex,
   Heading,
+  IconButton,
   Input,
   InputGroup,
   InputLeftElement,
+  Select,
   Text,
   useToast,
+  useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
+import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import { useState, useEffect, useRef } from "react";
 import { SearchIcon } from "@chakra-ui/icons";
 import DataTable from "../../components/DataTable/DataTable";
@@ -32,11 +38,35 @@ const Ratings = () => {
   const inputRef = useRef(null);
   const buttonRef = useRef(null);
   const queryClient = useQueryClient();
+  const { isOpen, onToggle } = useDisclosure();
+  const [isLowerThan1200] = useMediaQuery("(max-width: 1200px)");
   const [isLowerThan540] = useMediaQuery("(max-width: 540px)");
   const [isLowerThan355] = useMediaQuery("(max-width: 355px)");
   const toast = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [localId, setLocalId] = useState("");
+  const [gender, setGender] = useState("");
+  const [title, setTitle] = useState("");
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [isAdvanceSearch, setIsAdvanceSearch] = useState(false);
+  const [titles, setTitles] = useState([
+    "NM",
+    "CM",
+    "FM",
+    "IM",
+    "GM",
+    "WCM",
+    "WFM",
+    "WIM",
+    "WGM",
+    "ACM",
+    "AFM",
+    "AIM",
+    "AGM",
+  ]);
   const {
     data: ratingData,
     isLoading,
@@ -45,46 +75,85 @@ const Ratings = () => {
     error,
     isPreviousData,
     refetch,
-  } = useQuery(["data", page], () => fetchData(searchTerm, page), {
-    keepPreviousData: true,
-    staleTime: 5000,
-    onError: () => {
-      toast({
-        title: "Something went wrong...",
-        status: "error",
-        duration: 3000,
-        position: "bottom-right",
-      });
-    },
-  });
+  } = useQuery(
+    ["data", page],
+    () =>
+      fetchData(
+        isAdvanceSearch,
+        searchTerm,
+        page,
+        firstName,
+        lastName,
+        localId,
+        gender,
+        title
+      ),
+    {
+      keepPreviousData: true,
+      staleTime: 5000,
+      onError: () => {
+        toast({
+          title: "Something went wrong...",
+          status: "error",
+          duration: 3000,
+          position: "bottom-right",
+        });
+      },
+      onSuccess: (data) => {
+        if (data.items.length === 0) {
+          toast({
+            title: "No results Found",
+            status: "error",
+            duration: 3000,
+            position: "bottom-right",
+          });
+          // setPage(0);
+        }
+        setTotalPages(data.totalPage);
+      },
+    }
+  );
 
   useEffect(() => {
-    if (page > 1) {
-      refetch();
-    }
+    // if (page > 1) {
+    //   refetch();
+    // }
     return () => {
       queryClient.cancelQueries("data");
       queryClient.removeQueries("data");
     };
   }, [page]);
 
-  const fetchData = async (searchWord, page) => {
-    if (searchWord === "") {
-      searchWord = "a";
-    }
+  const resetAdvanceSearchFields = () => {
+    setFirstName("");
+    setLastName("");
+    setLocalId("");
+    setGender("");
+    setTitle("");
+  };
 
-    const { data } = await axios.get(
-      `api/search/ratings?query=${searchWord}&page=${page}`
-    );
-
-    if (data?.length === 0) {
-      toast({
-        title: "No results Found",
-        status: "error",
-        duration: 3000,
-        position: "bottom-right",
-      });
-    }
+  const fetchData = async (
+    isAdvanceSearch,
+    searchWord,
+    page,
+    firstname,
+    lastname,
+    localId,
+    gender,
+    title
+  ) => {
+    const { data } = await axios.get("api/search/ratings", {
+      params: {
+        isAdvanceSearch,
+        query: searchWord,
+        page: page,
+        firstname: firstname,
+        lastname: lastname,
+        localId: localId,
+        gender: gender,
+        title: title,
+      },
+    });
 
     return data;
   };
@@ -108,6 +177,7 @@ const Ratings = () => {
     if (event.key === "Enter") {
       event.preventDefault();
 
+      setPage(1);
       buttonRef.current.click();
     }
   };
@@ -131,51 +201,179 @@ const Ratings = () => {
           {isLowerThan355 ? "(September 2024)" : "(based on September 2024)"}
         </Text>
       </Flex>
-      <Flex marginBlock="1rem">
-        <InputGroup maxWidth="20rem" marginRight="1rem">
-          <InputLeftElement pointerEvents="none">
-            <SearchIcon color="gray.300" />
-          </InputLeftElement>
-          <Input
-            type="search"
-            placeholder="Search player"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            borderWidth="1.5px"
-            borderColor="gray.400"
-            spellCheck="false"
-            onKeyDown={handleKeyDown}
-            ref={inputRef}
-          />
-        </InputGroup>
-        <Button
-          bgColor="gray.400"
-          type="submit"
-          onClick={handleSearch}
-          ref={buttonRef}
-          isLoading={isFetching}
-          border="1px solid #E2E8F0"
-          _hover={{
-            bgColor: "#E2E8F0",
-            borderColor: "gray",
-            borderStyle: "solid",
-          }}
-        >
-          Search
-        </Button>
+      <Flex
+        marginBlock="1rem"
+        flexDirection={isLowerThan1200 ? "column" : "row"}
+      >
+        {isAdvanceSearch ? (
+          <>
+            <Flex flexDirection="column" gap="3">
+              <Flex>
+                <InputGroup maxWidth="15rem" marginRight="0.5rem">
+                  <InputLeftElement pointerEvents="none">
+                    <SearchIcon color="gray.300" />
+                  </InputLeftElement>
+                  <Input
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    borderWidth="1.5px"
+                    borderColor="gray.400"
+                    spellCheck="false"
+                    onKeyDown={handleKeyDown}
+                    ref={inputRef}
+                  />
+                </InputGroup>
+                <InputGroup maxWidth="15rem" marginRight="0.5rem">
+                  <InputLeftElement pointerEvents="none">
+                    <SearchIcon color="gray.300" />
+                  </InputLeftElement>
+                  <Input
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    borderWidth="1.5px"
+                    borderColor="gray.400"
+                    spellCheck="false"
+                    onKeyDown={handleKeyDown}
+                    ref={inputRef}
+                  />
+                </InputGroup>
+              </Flex>
+              <Flex>
+                <InputGroup maxWidth="15rem" marginRight="0.5rem">
+                  <InputLeftElement pointerEvents="none">
+                    <SearchIcon color="gray.300" />
+                  </InputLeftElement>
+                  <Input
+                    placeholder="Local ID"
+                    value={localId}
+                    onChange={(e) => setLocalId(e.target.value)}
+                    borderWidth="1.5px"
+                    borderColor="gray.400"
+                    spellCheck="false"
+                    onKeyDown={handleKeyDown}
+                    ref={inputRef}
+                  />
+                </InputGroup>
+                <Select
+                  borderWidth="1.5px"
+                  borderColor="gray.400"
+                  maxWidth="15rem"
+                  placeholder="Gender"
+                  marginRight="0.5rem"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  ref={inputRef}
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </Select>
+
+                <Select
+                  borderWidth="1.5px"
+                  borderColor="gray.400"
+                  maxWidth="15rem"
+                  placeholder="Title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  ref={inputRef}
+                >
+                  {titles.map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </Select>
+              </Flex>
+            </Flex>
+          </>
+        ) : (
+          <InputGroup maxWidth="20rem">
+            <InputLeftElement pointerEvents="none">
+              <SearchIcon color="gray.300" />
+            </InputLeftElement>
+            <Input
+              type="search"
+              placeholder="Search player or Local ID"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              marginRight={!isLowerThan1200 ? "1rem" : null}
+              borderWidth="1.5px"
+              borderColor="gray.400"
+              spellCheck="false"
+              onKeyDown={handleKeyDown}
+              ref={inputRef}
+            />
+          </InputGroup>
+        )}
+
+        <Flex my={isLowerThan1200 ? "1rem" : null} justifyContent="start">
+          <Button
+            bgColor="blue.200"
+            type="submit"
+            onClick={handleSearch}
+            ref={buttonRef}
+            isLoading={isFetching}
+            border="1px solid #E2E8F0"
+            _hover={{
+              bgColor: "#E2E8F0",
+              borderColor: "gray",
+              borderStyle: "solid",
+            }}
+          >
+            Search
+          </Button>
+          {isAdvanceSearch ? (
+            <Button
+              bgColor="gray.100"
+              border="1px solid #E2E8F0"
+              mx="0.5rem"
+              _hover={{
+                bgColor: "#E2E8F0",
+                borderColor: "gray",
+                borderStyle: "solid",
+              }}
+              onClick={resetAdvanceSearchFields}
+            >
+              Reset
+            </Button>
+          ) : null}
+          <ButtonGroup mx="0.5rem" isAttached variant="outline">
+            <Button
+              bgColor="gray.100"
+              onClick={() => {
+                resetAdvanceSearchFields();
+                setSearchTerm("");
+                setIsAdvanceSearch((e) => !e);
+              }}
+            >
+              Advance Search
+            </Button>
+            <IconButton
+              bgColor="gray.100"
+              icon={isAdvanceSearch ? <MinusIcon /> : <AddIcon />}
+              _hover={{}}
+              cursor="auto"
+              _active={{}}
+              _focusVisible={{}}
+            />
+          </ButtonGroup>
+        </Flex>
       </Flex>
 
       <DataTable
         isLoading={isLoading}
         isError={isError}
         isFetching={isFetching}
-        ratingData={ratingData}
+        ratingData={ratingData?.items}
         error={error}
       />
       <Flex justifyContent="end" marginBlock="2rem">
         <Button
-          border="1px solid gray"
-          bgColor="gray"
+          bgColor="gray.400"
           onClick={prevPage}
           isDisabled={isPreviousData || page === 1 || isFetching || isLoading}
         >
@@ -186,17 +384,15 @@ const Ratings = () => {
           alignItems="center"
         >
           <Text>
-            {isLowerThan355 ? null : "... "}Page {page}
-            {isLowerThan355 ? null : " ..."}
+            Page {ratingData?.items?.length > 0 ? page : "0"} of {totalPages}
           </Text>
         </Flex>
         <Button
-          border="1px solid gray"
-          bgColor="gray"
+          bgColor="gray.400"
           onClick={nextPage}
           isDisabled={
-            ratingData?.length < 10 ||
-            !ratingData?.length ||
+            ratingData?.items?.length < 10 ||
+            !ratingData?.items?.length ||
             isFetching ||
             isLoading
           }

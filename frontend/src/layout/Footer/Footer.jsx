@@ -23,9 +23,9 @@ const Footer = () => {
         <Flex height="full">
           <FooterNav buttonName="Home" route="/" />
           <FooterNav buttonName="Ratings" route="/ratings" />
-          {/* <FooterNav buttonName="About" />
-          <FooterNav buttonName="Contact Us" />
-          <FooterNav buttonName="FAQs" /> */}
+          {/* <FooterNav buttonName="Contact Us" /> */}
+          {/* <FooterNav buttonName="About" /> */}
+          {/* <FooterNav buttonName="FAQs" /> */}
         </Flex>
       )}
     </Flex>

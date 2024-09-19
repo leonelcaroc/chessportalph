@@ -1,17 +1,15 @@
-/* eslint-disable import/named */
-/* eslint-disable import/default */
-/* eslint-disable arrow-body-style */
-/* eslint-disable implicit-arrow-linebreak */
-import { configureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "./apiSlice.js";
+import { create } from "zustand";
 
-const store = configureStore({
-  reducer: {
-    [apiSlice.reducerPath]: apiSlice.reducer,
+const useAdminStore = create((set) => ({
+  adminData: localStorage.getItem("adminInfo")
+    ? JSON.parse(localStorage.getItem("adminInfo"))
+    : null,
+  setCredentials: (data) => {
+    localStorage.setItem("adminInfo", JSON.stringify(data));
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware),
-  devTools: true,
-});
+  logout: () => {
+    localStorage.removeItem("adminInfo");
+  },
+}));
 
-export default store;
+export default useAdminStore;
