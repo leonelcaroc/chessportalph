@@ -197,7 +197,6 @@ const updatePlayerById = asyncHandler(async (req, res) => {
 
   if (payload["B-day"]) {
     payload["B-day"] = convertDate(payload["B-day"]);
-    payload["B-Year"] = payload["B-day"].split("/")[2];
   }
 
   const schema = Joi.object({
@@ -226,6 +225,10 @@ const updatePlayerById = asyncHandler(async (req, res) => {
   const { error, value } = schema.validate({ id, payload });
   if (error) {
     return res.status(400).json({ status: "error", message: error.message });
+  }
+
+  if (payload["B-day"]) {
+    payload["B-Year"] = payload["B-day"].split("/")[2];
   }
 
   if (value.payload.TITLE === "none") {
