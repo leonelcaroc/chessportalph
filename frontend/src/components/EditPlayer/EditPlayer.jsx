@@ -44,6 +44,23 @@ function EditPlayer({
     }
   }
 
+  const titles = [
+    "NM",
+    "CM",
+    "FM",
+    "IM",
+    "GM",
+    "WCM",
+    "WFM",
+    "WIM",
+    "WGM",
+    "ACM",
+    "AFM",
+    "AIM",
+    "AGM",
+    "none",
+  ];
+
   return (
     <>
       <Drawer isOpen={isOpen} placement="right" size="sm">
@@ -79,16 +96,11 @@ function EditPlayer({
                         }))
                       }
                     >
-                      <option value="NM">NM</option>
-                      <option value="CM">CM</option>
-                      <option value="FM">FM</option>
-                      <option value="IM">IM</option>
-                      <option value="GM">GM</option>
-                      <option value="ACM">ACM</option>
-                      <option value="AFM">AFM</option>
-                      <option value="AIM">AIM</option>
-                      <option value="AGM">AGM</option>
-                      <option value="none">none</option>
+                      {titles.map((item) => (
+                        <option key={item} value={item}>
+                          {item}
+                        </option>
+                      ))}
                     </Select>
                   </Box>
 
