@@ -17,6 +17,6 @@ const searchSchema = mongoose.Schema({
   "B-Year": String,
 });
 
-const Search = mongoose.model("Novembers", searchSchema);
+const Search = mongoose.model("Decembers", searchSchema);
 
 export default Search;
