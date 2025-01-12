@@ -80,7 +80,7 @@ const getSearchPlayer = asyncHandler(async (req, res) => {
     };
   }
 
-  console.log(defaultQuery);
+  // console.log(defaultQuery);
 
   const skip = (page - 1) * limit;
 
