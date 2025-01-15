@@ -9,7 +9,7 @@ import {
 } from "../controllers/adminController.js";
 import { protectAdmin } from "../middleware/authMiddleware.js";
 
-router.post("/register", registerAdmin);
+// router.post("/register", registerAdmin);
 router.post("/auth", authAdmin);
 router.get("/players", protectAdmin, getPlayers);
 router.get(

@@ -1,7 +1,9 @@
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import Admin from "../models/adminModel.js";
-import Search from "../models/searchQueryModel.js";
+// import Search from "../models/searchQueryModel.js";
+import createSearchModel from "../models/searchQueryModel.js";
+import Settings from "../models/settingsModel.js";
 import { ObjectId } from "mongodb";
 import Joi from "joi";
 
@@ -41,11 +43,16 @@ const registerAdmin = asyncHandler(async (req, res) => {
   // const firstName = "Edward";
   // const lastName = "Serrano";
 
-  const userExists = await Admin.findOne({ email: email });
+  const userEmailExists = await Admin.findOne({ email: email });
+  const userExists = await Admin.findOne({ username: username });
 
+  if (userEmailExists) {
+    res.status(400);
+    throw new Error("Email already exists.");
+  }
   if (userExists) {
     res.status(400);
-    throw new Error("User already exists.");
+    throw new Error("Username already exists.");
   }
 
   const user = await Admin.create({
@@ -143,6 +150,11 @@ const getPlayers = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   try {
+    const mySettings = await Settings.find({});
+    const { month, year } = mySettings[0];
+
+    const Search = await createSearchModel(month);
+
     const length = await Search.countDocuments({ ...defaultQuery });
     const items = await Search.find({ ...defaultQuery })
       .skip(parseInt(skip))
@@ -186,19 +198,6 @@ const updatePlayerById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const payload = req.body;
 
-  function convertDate(dateString) {
-    const dateParts = dateString.split("-");
-    const year = dateParts[0];
-    const month = dateParts[1];
-    const day = dateParts[2];
-
-    return `${month}/${day}/${year}`;
-  }
-
-  if (payload["B-day"]) {
-    payload["B-day"] = convertDate(payload["B-day"]);
-  }
-
   const schema = Joi.object({
     id: Joi.string().hex().required(),
     payload: Joi.object({
@@ -209,8 +208,14 @@ const updatePlayerById = asyncHandler(async (req, res) => {
       "B-Year": Joi.string()
         .pattern(/^\d{4}$/)
         .allow(""),
+      // "B-day": Joi.string()
+      //   .pattern(/^\d{2}\/\d{2}\/\d{4}$/)
+      //   .allow(""),
+      // "B-day": Joi.string()
+      //   .pattern(/^\d{1,2}\/\d{1,2}\/\d{2}$/)
+      //   .allow(""),
       "B-day": Joi.string()
-        .pattern(/^\d{2}\/\d{2}\/\d{4}$/)
+        .pattern(/^\d{4}-\d{2}-\d{2}$/)
         .allow(""),
       Blitz: Joi.string().allow(""),
       "F-960": Joi.string().allow(""),
@@ -219,6 +224,8 @@ const updatePlayerById = asyncHandler(async (req, res) => {
       Rapid: Joi.string().allow(""),
       STD_: Joi.string().allow(""),
       TITLE: Joi.string().allow(""),
+      "G-Title": Joi.string().allow(""),
+      "N-25": Joi.string().allow(""),
     }).required(),
   });
 
@@ -227,9 +234,22 @@ const updatePlayerById = asyncHandler(async (req, res) => {
     return res.status(400).json({ status: "error", message: error.message });
   }
 
-  if (payload["B-day"]) {
-    payload["B-Year"] = payload["B-day"].split("/")[2];
+  function convertDate(dateString) {
+    const dateParts = dateString.split("-");
+    const year = dateParts[0];
+    const month = dateParts[1];
+    const day = dateParts[2];
+
+    return `${month}/${day}/${year.slice(2, 4)}`;
   }
+
+  if (payload["B-day"]) {
+    payload["B-day"] = convertDate(payload["B-day"]);
+  }
+
+  // if (payload["B-day"]) {
+  //   payload["B-Year"] = payload["B-day"].split("/")[2];
+  // }
 
   if (value.payload.TITLE === "none") {
     payload.TITLE = "";
@@ -239,9 +259,9 @@ const updatePlayerById = asyncHandler(async (req, res) => {
     payload.SEX = "";
   }
 
-  if (value.payload["B-day"]) {
-    value.payload["B-Year"] = value.payload["B-day"].split("/")[2];
-  }
+  // if (value.payload["B-day"]) {
+  //   value.payload["B-Year"] = value.payload["B-day"].split("/")[2];
+  // }
 
   try {
     const result = await Search.findOneAndUpdate(

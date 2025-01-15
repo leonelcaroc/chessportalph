@@ -36,11 +36,30 @@ function EditPlayer({
     updatePlayerMutation(player);
   };
 
+  // let defaultDate = "";
+  // if (player?.["B-day"]) {
+  //   const [month, day, year] = player?.["B-day"]?.split("/");
+  //   if (month && day && year) {
+  //     defaultDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  //   }
+  // }
+
+  // let defaultDate = "";
+  // if (player?.["B-day"]) {
+  //   const [month, day, year] = player?.["B-day"]?.split("/");
+  //   if (month && day && player.["B-year"]) {
+  //     defaultDate = `${player?.["B-Year"]}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  //   }
+  // }
+
   let defaultDate = "";
   if (player?.["B-day"]) {
     const [month, day, year] = player?.["B-day"]?.split("/");
-    if (month && day && year) {
-      defaultDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    if (month && day && player?.["B-Year"]) {
+      defaultDate = `${player?.["B-Year"]}-${month.padStart(
+        2,
+        "0"
+      )}-${day.padStart(2, "0")}`;
     }
   }
 
@@ -149,12 +168,16 @@ function EditPlayer({
                     <Input
                       type="date"
                       defaultValue={defaultDate}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        let [myYear, myMonth, myDay] =
+                          e.target.value.split("-");
+
                         setPlayer((prev) => ({
                           ...prev,
                           "B-day": e.target.value,
-                        }))
-                      }
+                          "B-Year": myYear,
+                        }));
+                      }}
                     />
                   </Box>
 

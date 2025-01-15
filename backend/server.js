@@ -9,6 +9,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import settingsRoutes from "./routes/settingsRoutes.js";
 
 connectDB();
 
@@ -45,6 +46,7 @@ app.use(cors(corsOptions));
 app.use("/api/users", userRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/settings", settingsRoutes);
 
 if (process.env.NODE_ENV === "production") {
   const __dirname = path.resolve();

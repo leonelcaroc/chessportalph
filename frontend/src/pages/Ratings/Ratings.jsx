@@ -198,7 +198,21 @@ const Ratings = () => {
           fontSize={isLowerThan540 ? "1rem" : "1.2rem"}
           whiteSpace="nowrap"
         >
-          {isLowerThan355 ? "(January 2025)" : "(based on January 2025)"}
+          {/* {isLowerThan355 ? "(January 2025)" : "(based on January 2025)"} */}
+          {/* {isLowerThan355
+            ? `(${ratingData?.currentMonth} ${ratingData?.currentYear})`
+            : `(based on ${ratingData?.currentMonth} ${ratingData?.currentYear})`} */}
+          {ratingData?.currentMonth && ratingData?.currentYear
+            ? isLowerThan355
+              ? `(${
+                  ratingData.currentMonth.charAt(0).toUpperCase() +
+                  ratingData.currentMonth.slice(1)
+                } ${ratingData.currentYear})`
+              : `(based on ${
+                  ratingData.currentMonth.charAt(0).toUpperCase() +
+                  ratingData.currentMonth.slice(1)
+                } ${ratingData.currentYear})`
+            : "..."}
         </Text>
       </Flex>
       <Flex

@@ -1,5 +1,7 @@
 import asyncHandler from "express-async-handler";
-import Search from "../models/searchQueryModel.js";
+// import Search from "../models/searchQueryModel.js";
+import createSearchModel from "../models/searchQueryModel.js";
+import Settings from "../models/settingsModel.js";
 import Joi from "joi";
 
 // desc     Search player/s
@@ -85,6 +87,15 @@ const getSearchPlayer = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   try {
+    // console.log(mySettings);
+
+    // const collectionName = "januarys";
+    // const collectionName = mySettings[0].month;
+    const mySettings = await Settings.find({});
+    const { month, year } = mySettings[0];
+
+    const Search = await createSearchModel(month);
+
     const length = await Search.countDocuments({ ...defaultQuery });
     const items = await Search.find({ ...defaultQuery })
       .skip(parseInt(skip))
@@ -96,6 +107,8 @@ const getSearchPlayer = asyncHandler(async (req, res) => {
       page: page,
       totalPage: totalPage,
       totalItems: length,
+      currentMonth: month,
+      currentYear: year,
     });
   } catch (error) {
     res.status(500).json({ error: "An error occurred" });
