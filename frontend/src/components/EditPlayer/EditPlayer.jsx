@@ -25,41 +25,27 @@ function EditPlayer({
   updatePlayerMutation,
   isUpdatingPlayer,
 }) {
-  // const [month, day, year] = player?.["B-day"]?.split("/");
-  // const defaultDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
-  //   2,
-  //   "0"
-  // )}`;
-
   const handleUpdatePlayer = async (e) => {
     e.preventDefault();
-    updatePlayerMutation(player);
+
+    const formattedPlayer = { ...player };
+
+    if (formattedPlayer?.["B-day"]) {
+      const [year, month, day] = formattedPlayer["B-day"].split("-");
+      if (year && month && day) {
+        formattedPlayer["B-day"] = `${month}/${day}/${year}`;
+      }
+    }
+
+    updatePlayerMutation(formattedPlayer);
   };
 
-  // let defaultDate = "";
-  // if (player?.["B-day"]) {
-  //   const [month, day, year] = player?.["B-day"]?.split("/");
-  //   if (month && day && year) {
-  //     defaultDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-  //   }
-  // }
-
-  // let defaultDate = "";
-  // if (player?.["B-day"]) {
-  //   const [month, day, year] = player?.["B-day"]?.split("/");
-  //   if (month && day && player.["B-year"]) {
-  //     defaultDate = `${player?.["B-Year"]}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-  //   }
-  // }
-
   let defaultDate = "";
+
   if (player?.["B-day"]) {
     const [month, day, year] = player?.["B-day"]?.split("/");
-    if (month && day && player?.["B-Year"]) {
-      defaultDate = `${player?.["B-Year"]}-${month.padStart(
-        2,
-        "0"
-      )}-${day.padStart(2, "0")}`;
+    if (month && day && year) {
+      defaultDate = `${year}-${month}-${day}`;
     }
   }
 

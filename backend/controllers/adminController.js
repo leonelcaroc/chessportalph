@@ -208,14 +208,8 @@ const updatePlayerById = asyncHandler(async (req, res) => {
       "B-Year": Joi.string()
         .pattern(/^\d{4}$/)
         .allow(""),
-      // "B-day": Joi.string()
-      //   .pattern(/^\d{2}\/\d{2}\/\d{4}$/)
-      //   .allow(""),
-      // "B-day": Joi.string()
-      //   .pattern(/^\d{1,2}\/\d{1,2}\/\d{2}$/)
-      //   .allow(""),
       "B-day": Joi.string()
-        .pattern(/^\d{4}-\d{2}-\d{2}$/)
+        .pattern(/^\d{2}\/\d{2}\/\d{4}$/)
         .allow(""),
       Blitz: Joi.string().allow(""),
       "F-960": Joi.string().allow(""),
@@ -234,23 +228,6 @@ const updatePlayerById = asyncHandler(async (req, res) => {
     return res.status(400).json({ status: "error", message: error.message });
   }
 
-  function convertDate(dateString) {
-    const dateParts = dateString.split("-");
-    const year = dateParts[0];
-    const month = dateParts[1];
-    const day = dateParts[2];
-
-    return `${month}/${day}/${year.slice(2, 4)}`;
-  }
-
-  if (payload["B-day"]) {
-    payload["B-day"] = convertDate(payload["B-day"]);
-  }
-
-  // if (payload["B-day"]) {
-  //   payload["B-Year"] = payload["B-day"].split("/")[2];
-  // }
-
   if (value.payload.TITLE === "none") {
     payload.TITLE = "";
   }
@@ -259,11 +236,12 @@ const updatePlayerById = asyncHandler(async (req, res) => {
     payload.SEX = "";
   }
 
-  // if (value.payload["B-day"]) {
-  //   value.payload["B-Year"] = value.payload["B-day"].split("/")[2];
-  // }
-
   try {
+    const mySettings = await Settings.find({});
+    const { month, year } = mySettings[0];
+
+    const Search = await createSearchModel(month);
+
     const result = await Search.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: { ...payload } }
