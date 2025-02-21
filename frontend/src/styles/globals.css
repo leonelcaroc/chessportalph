@@ -86,7 +86,7 @@ body {
   outline: 1px solid #484ff6;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 360px) {
   #data-head > th,
   #data-row > td,
   #data-expandable > td {

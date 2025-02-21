@@ -42,6 +42,7 @@ const Ratings = () => {
   const [isLowerThan1200] = useMediaQuery("(max-width: 1200px)");
   const [isLowerThan540] = useMediaQuery("(max-width: 540px)");
   const [isLowerThan355] = useMediaQuery("(max-width: 355px)");
+  const [isLowerThan450] = useMediaQuery("(max-width: 450px)");
   const toast = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -198,10 +199,6 @@ const Ratings = () => {
           fontSize={isLowerThan540 ? "1rem" : "1.2rem"}
           whiteSpace="nowrap"
         >
-          {/* {isLowerThan355 ? "(January 2025)" : "(based on January 2025)"} */}
-          {/* {isLowerThan355
-            ? `(${ratingData?.currentMonth} ${ratingData?.currentYear})`
-            : `(based on ${ratingData?.currentMonth} ${ratingData?.currentYear})`} */}
           {ratingData?.currentMonth && ratingData?.currentYear
             ? isLowerThan355
               ? `(${
@@ -222,8 +219,8 @@ const Ratings = () => {
         {isAdvanceSearch ? (
           <>
             <Flex flexDirection="column" gap="3">
-              <Flex>
-                <InputGroup maxWidth="15rem" marginRight="0.5rem">
+              <Flex gap="0.5rem" marginInline="auto">
+                <InputGroup maxWidth={isLowerThan450 ? "10rem" : "15rem"}>
                   <InputLeftElement pointerEvents="none">
                     <SearchIcon color="gray.300" />
                   </InputLeftElement>
@@ -238,7 +235,10 @@ const Ratings = () => {
                     ref={inputRef}
                   />
                 </InputGroup>
-                <InputGroup maxWidth="15rem" marginRight="0.5rem">
+                <InputGroup
+                  maxWidth={isLowerThan450 ? "10rem" : "15rem"}
+                  marginRight="0.5rem"
+                >
                   <InputLeftElement pointerEvents="none">
                     <SearchIcon color="gray.300" />
                   </InputLeftElement>
@@ -254,7 +254,10 @@ const Ratings = () => {
                   />
                 </InputGroup>
               </Flex>
-              <Flex>
+              <Flex
+                maxWidth={isLowerThan450 ? "20rem" : null}
+                // marginInline={isLowerThan450 ? "auto" : null}
+              >
                 <InputGroup maxWidth="15rem" marginRight="0.5rem">
                   <InputLeftElement pointerEvents="none">
                     <SearchIcon color="gray.300" />
@@ -355,7 +358,42 @@ const Ratings = () => {
               Reset
             </Button>
           ) : null}
-          <ButtonGroup mx="0.5rem" isAttached variant="outline">
+
+          {isLowerThan450 && isAdvanceSearch ? null : (
+            <ButtonGroup
+              mx="0.5rem"
+              isAttached
+              variant="outline"
+              display={isLowerThan450 ? null : null}
+            >
+              <Button
+                bgColor="gray.100"
+                onClick={() => {
+                  resetAdvanceSearchFields();
+                  setSearchTerm("");
+                  setIsAdvanceSearch((e) => !e);
+                }}
+              >
+                Advance Search
+              </Button>
+              <IconButton
+                bgColor="gray.100"
+                icon={isAdvanceSearch ? <MinusIcon /> : <AddIcon />}
+                _hover={{}}
+                cursor="auto"
+                _active={{}}
+                _focusVisible={{}}
+              />
+            </ButtonGroup>
+          )}
+        </Flex>
+        {isLowerThan450 && isAdvanceSearch ? (
+          <ButtonGroup
+            mx="0.5rem"
+            isAttached
+            variant="outline"
+            display={isLowerThan450 ? null : null}
+          >
             <Button
               bgColor="gray.100"
               onClick={() => {
@@ -375,7 +413,7 @@ const Ratings = () => {
               _focusVisible={{}}
             />
           </ButtonGroup>
-        </Flex>
+        ) : null}
       </Flex>
 
       <DataTable
