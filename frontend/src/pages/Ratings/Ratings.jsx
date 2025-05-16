@@ -59,6 +59,7 @@ const Ratings = () => {
     "FM",
     "IM",
     "GM",
+    "WNM",
     "WCM",
     "WFM",
     "WIM",
