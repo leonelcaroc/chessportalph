@@ -220,6 +220,9 @@ const updatePlayerById = asyncHandler(async (req, res) => {
       TITLE: Joi.string().allow(""),
       "G-Title": Joi.string().allow(""),
       "N-25": Joi.string().allow(""),
+      __EMPTY: Joi.string().allow(""),
+      __EMPTY_1: Joi.string().allow(""),
+      __EMPTY_2: Joi.string().allow(""),
     }).required(),
   });
 
