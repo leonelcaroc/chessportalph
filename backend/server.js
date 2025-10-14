@@ -32,28 +32,28 @@ app.use(
 );
 app.disable("x-powered-by");
 
-// const corsOptions = {
-//   // origin: ["http://localhost:3000"],
-//   origin: ["http://chessportal.org"],
-//   credentials: true,
-// };
+const corsOptions = {
+  // origin: ["http://localhost:3000"],
+  origin: ["http://chessportal.org"],
+  credentials: true,
+};
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // app.use(cookieParser());
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  const allowedIPs = ["::1", "127.0.0.1"]; // IPv6 and IPv4 localhost
-  const clientIP = req.ip || req.socket.remoteAddress;
+// app.use((req, res, next) => {
+//   const allowedIPs = ["1.2.3.4"]; // Replace with your allowed server's IP
+//   const clientIP = req.ip || req.connection.remoteAddress;
 
-  if (!allowedIPs.includes(clientIP)) {
-    return res.status(403).json({ message: "Access denied" });
-  }
+//   if (!allowedIPs.includes(clientIP)) {
+//     return res.status(403).json({ message: "Access denied" });
+//   }
 
-  next();
-});
+//   next();
+// });
 
 app.use("/api/users", userRoutes);
 app.use("/api/search", searchRoutes);
