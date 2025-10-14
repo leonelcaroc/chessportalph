@@ -10,7 +10,7 @@ const api = axios.create({
   baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
-    "x-meta": process.env.X_META,
+    "x-meta": import.meta.env.X_META,
   },
 });
 
@@ -19,7 +19,7 @@ const adminApi = axios.create({
   baseURL: `${api.defaults.baseURL}/${adminRoute}`,
   headers: {
     "Content-Type": "application/json",
-    "x-meta": process.env.X_META,
+    "x-meta": import.meta.env.X_META,
   },
 });
 
