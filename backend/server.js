@@ -70,7 +70,7 @@ app.use((req, res, next) => {
   // console.log(frontendSecret);
 
   // console.log("client secret: ", clientSecret);
-  // console.log("req headers: ", req.headers);
+  console.log("req headers: ", req.headers);
 
   // To persuade those used my backend server publicly
   console.log("clientSecret: ", clientSecret);
