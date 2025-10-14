@@ -64,6 +64,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  const clientIP = req.ip;
+
+  console.log(
+    `Incoming request from: ${clientIP} -> ${req.method} ${req.originalUrl}`
+  );
+  next();
+});
+
 app.use("/api/users", userRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/admin", adminRoutes);
