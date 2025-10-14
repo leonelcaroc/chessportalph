@@ -38,6 +38,20 @@ app.disable("x-powered-by");
 //   credentials: true,
 // };
 
+const allowedOrigins = [
+  "http://localhost:3000", // local dev
+  "https://chessportalph.org", // optional
+];
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization", "X-Meta", "Bearer-Token"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -53,17 +67,24 @@ app.use((req, res, next) => {
   // Get the header from request
   const clientSecret = req.headers["x-meta"];
 
-  console.log("client secret: ", clientSecret);
+  // console.log(frontendSecret);
+
+  // console.log("client secret: ", clientSecret);
+  // console.log("req headers: ", req.headers);
 
   // To persuade those used my backend server publicly
-  // if (clientSecret !== frontendSecret) {
-  //   console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
-  //   return res.status(429).json({
-  //     success: false,
-  //     message: "Too many requests, please try again later.",
-  //     retryAfter: 60,
-  //   });
-  // }
+  // console.log("clientSecret: ", clientSecret);
+  // console.log("frontendSecret: ", frontendSecret);
+  // console.log(clientSecret === frontendSecret);
+
+  if (clientSecret !== frontendSecret) {
+    console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
+    return res.status(429).json({
+      success: false,
+      message: "Too many requests, please try again later.",
+      retryAfter: 60,
+    });
+  }
 
   next();
 });

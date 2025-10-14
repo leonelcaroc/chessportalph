@@ -33,6 +33,7 @@ import { SearchIcon } from "@chakra-ui/icons";
 import DataTable from "../../components/DataTable/DataTable";
 import { useQuery, useQueryClient } from "react-query";
 import axios from "axios";
+import { api } from "../../services/api";
 
 const Ratings = () => {
   const inputRef = useRef(null);
@@ -144,7 +145,8 @@ const Ratings = () => {
     gender,
     title
   ) => {
-    const { data } = await axios.get("api/search/ratings", {
+    // const { data } = await axios.get("api/search/ratings", {
+    const { data } = await api.get("search/ratings", {
       params: {
         isAdvanceSearch,
         query: searchWord,
