@@ -44,10 +44,20 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-  origin: allowedOrigins,
+  // origin: allowedOrigins,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow curl or server-side requests
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "X-Meta", "Bearer-Token"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
