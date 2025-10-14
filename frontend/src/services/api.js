@@ -10,12 +10,17 @@ const api = axios.create({
   baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
+    "x-meta": process.env.X_META,
   },
 });
 
 const adminApi = axios.create({
   ...api.defaults,
   baseURL: `${api.defaults.baseURL}/${adminRoute}`,
+  headers: {
+    "Content-Type": "application/json",
+    "x-meta": process.env.X_META,
+  },
 });
 
 export { api, adminApi };
