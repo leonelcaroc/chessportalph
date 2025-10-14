@@ -70,21 +70,21 @@ app.use((req, res, next) => {
   // console.log(frontendSecret);
 
   // console.log("client secret: ", clientSecret);
-  console.log("req headers: ", req.headers);
+  // console.log("req headers: ", req.headers);
 
   // To persuade those used my backend server publicly
   console.log("clientSecret: ", clientSecret);
   console.log("frontendSecret: ", frontendSecret);
   console.log(clientSecret === frontendSecret);
 
-  if (clientSecret !== frontendSecret) {
-    console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
-    return res.status(429).json({
-      success: false,
-      message: "Too many requests, please try again later.",
-      retryAfter: 60,
-    });
-  }
+  // if (clientSecret !== frontendSecret) {
+  //   console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
+  //   return res.status(429).json({
+  //     success: false,
+  //     message: "Too many requests, please try again later.",
+  //     retryAfter: 60,
+  //   });
+  // }
 
   next();
 });
