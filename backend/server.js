@@ -47,6 +47,26 @@ app.use(express.urlencoded({ extended: true }));
 app.set("trust proxy", true); // important if behind Nginx or Cloudflare
 
 app.use((req, res, next) => {
+  // Your secret key stored safely in environment variables
+  const frontendSecret = process.env.FRONTEND_SECRET;
+
+  // Get the header from request
+  const clientSecret = req.headers["x-meta"];
+
+  // To persuade those used my backend server publicly
+  if (clientSecret !== frontendSecret) {
+    console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
+    return res.status(429).json({
+      success: false,
+      message: "Too many requests, please try again later.",
+      retryAfter: 60,
+    });
+  }
+
+  next();
+});
+
+app.use((req, res, next) => {
   const allowedIPs = [
     "127.0.0.1",
     "::1",
@@ -70,26 +90,6 @@ app.use((req, res, next) => {
   console.log(
     `Incoming request from: ${clientIP} -> ${req.method} ${req.originalUrl}`
   );
-  next();
-});
-
-app.use((req, res, next) => {
-  // Your secret key stored safely in environment variables
-  const frontendSecret = process.env.FRONTEND_SECRET;
-
-  // Get the header from request
-  const clientSecret = req.headers["x-meta"];
-
-  // To persuade those used my backend server publicly
-  if (clientSecret !== frontendSecret) {
-    console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
-    return res.status(429).json({
-      success: false,
-      message: "Too many requests, please try again later.",
-      retryAfter: 60,
-    });
-  }
-
   next();
 });
 
