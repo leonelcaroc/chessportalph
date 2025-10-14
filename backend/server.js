@@ -43,6 +43,7 @@ const allowedOrigins = [
   "https://chessportalph.org", // optional
 ];
 
+let options;
 const corsOptions = {
   // origin: allowedOrigins,
   origin: (origin, callback) => {
@@ -60,7 +61,18 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-app.use(cors(corsOptions));
+const feStatic = {
+  origin: "https://chessportalph.org",
+  credentials: true,
+};
+
+if (process.env.NODE_ENV === "production") {
+  options = feStatic;
+} else {
+  options = corsOptions;
+}
+
+app.use(cors(options));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -87,14 +99,14 @@ app.use((req, res, next) => {
   console.log("frontendSecret: ", frontendSecret);
   console.log(clientSecret === frontendSecret);
 
-  // if (clientSecret !== frontendSecret) {
-  //   console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
-  //   return res.status(429).json({
-  //     success: false,
-  //     message: "Too many requests, please try again later.",
-  //     retryAfter: 60,
-  //   });
-  // }
+  if (clientSecret !== frontendSecret) {
+    console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
+    return res.status(429).json({
+      success: false,
+      message: "Too many requests, please try again later.",
+      retryAfter: 60,
+    });
+  }
 
   next();
 });
@@ -104,7 +116,7 @@ app.use((req, res, next) => {
     "127.0.0.1",
     "::1",
     "::ffff:127.0.0.1",
-    "YOUR_SERVER_PUBLIC_IP", // e.g. 192.168.1.50 or external IP
+    // "YOUR_SERVER_PUBLIC_IP",
   ];
 
   const clientIP = req.ip;
@@ -148,5 +160,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+  console.log(`Backend Server is running on port ${process.env.PORT}`);
 });
