@@ -53,17 +53,17 @@ app.use((req, res, next) => {
   // Get the header from request
   const clientSecret = req.headers["x-meta"];
 
-  console.log("client secret: ", clientSecret);
+  // console.log("client secret: ", clientSecret);
 
   // To persuade those used my backend server publicly
-  // if (clientSecret !== frontendSecret) {
-  //   console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
-  //   return res.status(429).json({
-  //     success: false,
-  //     message: "Too many requests, please try again later.",
-  //     retryAfter: 60,
-  //   });
-  // }
+  if (clientSecret !== frontendSecret) {
+    console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
+    return res.status(429).json({
+      success: false,
+      message: "Too many requests, please try again later.",
+      retryAfter: 60,
+    });
+  }
 
   next();
 });
