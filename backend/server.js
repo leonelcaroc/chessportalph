@@ -95,9 +95,9 @@ app.use((req, res, next) => {
   // console.log("req headers: ", req.headers);
 
   // To persuade those used my backend server publicly
-  console.log("clientSecret: ", clientSecret);
-  console.log("frontendSecret: ", frontendSecret);
-  console.log(clientSecret === frontendSecret);
+  // console.log("clientSecret: ", clientSecret);
+  // console.log("frontendSecret: ", frontendSecret);
+  // console.log(clientSecret === frontendSecret);
 
   // if (clientSecret !== frontendSecret) {
   //   console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
