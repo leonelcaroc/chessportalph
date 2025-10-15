@@ -107,6 +107,22 @@ app.use(express.urlencoded({ extended: true }));
 //   next();
 // });
 
+// blocklist middleware
+const blocklist = new Set(["167.99.182.39"]);
+
+app.use((req, res, next) => {
+  const ip =
+    req.ip ||
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.connection.remoteAddress;
+  const ua = req.get("User-Agent") || "";
+  if (blocklist.has(ip)) return res.status(429).send("Too many requests");
+  if (/l9scan|leakix|Go-http-client|HeadlessChrome/i.test(ua)) {
+    return res.status(429).send("Too many requests");
+  }
+  next();
+});
+
 app.use((req, res, next) => {
   // Your secret key stored safely in environment variables
   const realIP = req.headers["x-forwarded-for"] || req.ip;
@@ -125,9 +141,9 @@ app.use((req, res, next) => {
   // console.log("req headers: ", req.headers);
 
   // To persuade those used my backend server publicly
-  // console.log("clientSecret: ", clientSecret);
-  // console.log("frontendSecret: ", frontendSecret);
-  // console.log(clientSecret === frontendSecret);
+  console.log("clientSecret: ", clientSecret);
+  console.log("frontendSecret: ", frontendSecret);
+  console.log(clientSecret === frontendSecret);
 
   if (clientSecret !== frontendSecret) {
     console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
