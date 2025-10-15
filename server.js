@@ -20,6 +20,9 @@ connectDB();
 
 const app = express();
 
+// ✅ Trust proxy for real IPs
+app.set("trust proxy", true);
+
 // ✅ Define allowed origins
 const allowedOrigins = ["http://localhost:5173", "https://chessportalph.org"];
 
@@ -57,14 +60,17 @@ const apiLimiter = rateLimit({
 });
 app.use(apiLimiter);
 
-// ✅ Your IP + UA blocklist
+// ✅ Blocklist and bot filter
 const blocklist = new Set(["167.99.182.39"]);
+
 app.use((req, res, next) => {
-  const ip = req.ip || req.headers["x-forwarded-for"]?.split(",")[0];
+  const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip;
   const ua = req.get("User-Agent") || "";
+
   if (blocklist.has(ip)) return res.status(429).send("Too many requests");
   if (/l9scan|leakix|Go-http-client|HeadlessChrome/i.test(ua))
     return res.status(429).send("Too many requests");
+
   next();
 });
 
