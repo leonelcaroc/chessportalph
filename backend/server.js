@@ -39,21 +39,21 @@ app.disable("x-powered-by");
 //   credentials: true,
 // };
 
-// const apiLimiter = rateLimit({
-//   windowMs: 24 * 60 * 60 * 1000, // 24 hours = 1 day
-//   max: 80, // Limit each IP to 100 requests per day
-//   standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
-//   legacyHeaders: false, // Disable old headers
-//   message: {
-//     success: false,
-//     message: "Sumosobra kana",
-//   },
-// });
+const apiLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours = 1 day
+  max: 100, // Limit each IP to 100 requests per day
+  standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
+  legacyHeaders: false, // Disable old headers
+  message: {
+    success: false,
+    message: "Sumosobra kana",
+  },
+});
 
-// app.use(apiLimiter);
+app.use(apiLimiter);
 
 const allowedOrigins = [
-  "http://localhost:3000", // local dev
+  "http://localhost:5173", // local dev
   "https://chessportalph.org", // optional
 ];
 
@@ -94,18 +94,23 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(cookieParser());
 // app.use(cors(corsOptions));
 
-app.set("trust proxy", true); // important if behind Nginx or Cloudflare
+// app.set("trust proxy", true);
+
+// app.use((req, res, next) => {
+//   const realIP = req.headers["x-forwarded-for"] || req.ip;
+//   const ua = req.headers["user-agent"];
+//   console.log(`Real IP: ${realIP}`);
+//   console.log(`User-Agent: ${ua}`);
+//   next();
+// });
 
 app.use((req, res, next) => {
+  // Your secret key stored safely in environment variables
   const realIP = req.headers["x-forwarded-for"] || req.ip;
   const ua = req.headers["user-agent"];
   console.log(`Real IP: ${realIP}`);
   console.log(`User-Agent: ${ua}`);
-  next();
-});
 
-app.use((req, res, next) => {
-  // Your secret key stored safely in environment variables
   const frontendSecret = process.env.FRONTEND_SECRET;
 
   // Get the header from request
@@ -121,35 +126,35 @@ app.use((req, res, next) => {
   // console.log("frontendSecret: ", frontendSecret);
   // console.log(clientSecret === frontendSecret);
 
-  // if (clientSecret !== frontendSecret) {
-  //   console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
-  //   return res.status(429).json({
-  //     success: false,
-  //     message: "Too many requests, please try again later.",
-  //     retryAfter: 60,
-  //   });
-  // }
-
-  next();
-});
-
-app.use((req, res, next) => {
-  const allowedIPs = [
-    "127.0.0.1",
-    "::1",
-    "::ffff:127.0.0.1",
-    // "YOUR_SERVER_PUBLIC_IP",
-  ];
-
-  const clientIP = req.ip;
-
-  if (!allowedIPs.includes(clientIP)) {
-    console.warn(`Blocked IP attempt: ${clientIP}`);
-    return res.status(403).json({ message: "Access denied" });
+  if (clientSecret !== frontendSecret) {
+    console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
+    return res.status(429).json({
+      success: false,
+      message: "Too many requests, please try again later.",
+      retryAfter: 60,
+    });
   }
 
   next();
 });
+
+// app.use((req, res, next) => {
+//   const allowedIPs = [
+//     "127.0.0.1",
+//     "::1",
+//     "::ffff:127.0.0.1",
+//     // "YOUR_SERVER_PUBLIC_IP",
+//   ];
+
+//   const clientIP = req.ip;
+
+//   if (!allowedIPs.includes(clientIP)) {
+//     console.warn(`Blocked IP attempt: ${clientIP}`);
+//     return res.status(403).json({ message: "Access denied" });
+//   }
+
+//   next();
+// });
 
 app.use((req, res, next) => {
   const clientIP = req.ip;
