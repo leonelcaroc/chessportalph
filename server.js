@@ -20,8 +20,19 @@ connectDB();
 
 const app = express();
 
-// ✅ Trust proxy for real IPs
-app.set("trust proxy", true);
+// ✅ Add this
+app.set("trust proxy", 1);
+
+// ✅ Keep this config
+const apiLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Sumosobra kana" },
+  trustProxy: true,
+});
+app.use("/api/", apiLimiter);
 
 // ✅ Define allowed origins
 const allowedOrigins = ["http://localhost:5173", "https://chessportalph.org"];
@@ -49,16 +60,6 @@ app.disable("x-powered-by");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// ✅ Rate limiter
-const apiLimiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, message: "Sumosobra kana" },
-});
-app.use(apiLimiter);
 
 // ✅ Blocklist and bot filter
 const blocklist = new Set(["167.99.182.39"]);
