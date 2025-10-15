@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
+import rateLimit from "express-rate-limit";
 
 connectDB();
 
@@ -37,6 +38,19 @@ app.disable("x-powered-by");
 //   origin: ["http://chessportal.org"],
 //   credentials: true,
 // };
+
+// const apiLimiter = rateLimit({
+//   windowMs: 24 * 60 * 60 * 1000, // 24 hours = 1 day
+//   max: 80, // Limit each IP to 100 requests per day
+//   standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
+//   legacyHeaders: false, // Disable old headers
+//   message: {
+//     success: false,
+//     message: "Sumosobra kana",
+//   },
+// });
+
+// app.use(apiLimiter);
 
 const allowedOrigins = [
   "http://localhost:3000", // local dev
@@ -81,6 +95,14 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(cors(corsOptions));
 
 app.set("trust proxy", true); // important if behind Nginx or Cloudflare
+
+app.use((req, res, next) => {
+  const realIP = req.headers["x-forwarded-for"] || req.ip;
+  const ua = req.headers["user-agent"];
+  console.log(`Real IP: ${realIP}`);
+  console.log(`User-Agent: ${ua}`);
+  next();
+});
 
 app.use((req, res, next) => {
   // Your secret key stored safely in environment variables
@@ -143,18 +165,18 @@ app.use("/api/search", searchRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/settings", settingsRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+// if (process.env.NODE_ENV === "production") {
+//   const __dirname = path.resolve();
+//   app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
-  );
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running....");
-  });
-}
+//   app.get("*", (req, res) =>
+//     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+//   );
+// } else {
+//   app.get("/", (req, res) => {
+//     res.send("API is running....");
+//   });
+// }
 
 app.use(notFound);
 app.use(errorHandler);
