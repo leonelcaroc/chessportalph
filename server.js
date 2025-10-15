@@ -4,12 +4,15 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import cors from "cors";
 dotenv.config();
-import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
-import connectDB from "./config/db.js";
-import userRoutes from "./routes/userRoutes.js";
-import searchRoutes from "./routes/searchRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js";
-import settingsRoutes from "./routes/settingsRoutes.js";
+import {
+  notFound,
+  errorHandler,
+} from "./backend/middleware/errorMiddleware.js";
+import connectDB from "./backend/config/db.js";
+import userRoutes from "./backend/routes/userRoutes.js";
+import searchRoutes from "./backend/routes/searchRoutes.js";
+import adminRoutes from "./backend/routes/adminRoutes.js";
+import settingsRoutes from "./backend/routes/settingsRoutes.js";
 import rateLimit from "express-rate-limit";
 
 connectDB();
