@@ -3,147 +3,77 @@ import express from "express";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import cors from "cors";
-dotenv.config();
+import rateLimit from "express-rate-limit";
+
+import connectDB from "./backend/config/db.js";
 import {
   notFound,
   errorHandler,
 } from "./backend/middleware/errorMiddleware.js";
-import connectDB from "./backend/config/db.js";
 import userRoutes from "./backend/routes/userRoutes.js";
 import searchRoutes from "./backend/routes/searchRoutes.js";
 import adminRoutes from "./backend/routes/adminRoutes.js";
 import settingsRoutes from "./backend/routes/settingsRoutes.js";
-import rateLimit from "express-rate-limit";
 
+dotenv.config();
 connectDB();
 
 const app = express();
 
-app.use(
-  helmet.contentSecurityPolicy({
-    useDefaults: true,
-    directives: {
-      "img-src": [
-        "https://chessportalph.org",
-        "https://res.cloudinary.com/",
+// ✅ Define allowed origins
+const allowedOrigins = ["http://localhost:5173", "https://chessportalph.org"];
 
-        "data:",
-      ],
-      upgradeInsecureRequests: [],
-    },
-    reportOnly: false,
-  })
-);
-app.disable("x-powered-by");
-
-// const corsOptions = {
-//   // origin: ["http://localhost:3000"],
-//   origin: ["http://chessportal.org"],
-//   credentials: true,
-// };
-
-const apiLimiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24 hours = 1 day
-  max: 100, // Limit each IP to 100 requests per day
-  standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
-  legacyHeaders: false, // Disable old headers
-  message: {
-    success: false,
-    message: "Sumosobra kana",
-  },
-});
-
-app.use(apiLimiter);
-
-const allowedOrigins = [
-  "http://localhost:5173", // local dev
-  "https://chessportalph.org", // optional
-];
-
-let options;
+// ✅ Setup CORS first!
 const corsOptions = {
-  // origin: allowedOrigins,
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow curl or server-side requests
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization", "X-Meta", "Bearer-Token"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Meta"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
 };
 
-const feStatic = {
-  origin: "https://chessportalph.org",
-  credentials: true,
-};
+// ✅ Apply CORS globally
+app.use(cors(corsOptions));
+// ✅ Handle preflight requests immediately
+app.options("*", cors(corsOptions));
 
-if (process.env.NODE_ENV === "production") {
-  options = feStatic;
-} else {
-  options = corsOptions;
-}
-
-app.use(cors(options));
+// --- Now continue with your other middlewares ---
+app.use(helmet());
+app.disable("x-powered-by");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use(cookieParser());
-// app.use(cors(corsOptions));
+// ✅ Rate limiter
+const apiLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Sumosobra kana" },
+});
+app.use(apiLimiter);
 
-// app.set("trust proxy", true);
-
-// app.use((req, res, next) => {
-//   const realIP = req.headers["x-forwarded-for"] || req.ip;
-//   const ua = req.headers["user-agent"];
-//   console.log(`Real IP: ${realIP}`);
-//   console.log(`User-Agent: ${ua}`);
-//   next();
-// });
-
-// blocklist middleware
+// ✅ Your IP + UA blocklist
 const blocklist = new Set(["167.99.182.39"]);
-
 app.use((req, res, next) => {
-  const ip =
-    req.ip ||
-    req.headers["x-forwarded-for"]?.split(",")[0] ||
-    req.connection.remoteAddress;
+  const ip = req.ip || req.headers["x-forwarded-for"]?.split(",")[0];
   const ua = req.get("User-Agent") || "";
   if (blocklist.has(ip)) return res.status(429).send("Too many requests");
-  if (/l9scan|leakix|Go-http-client|HeadlessChrome/i.test(ua)) {
+  if (/l9scan|leakix|Go-http-client|HeadlessChrome/i.test(ua))
     return res.status(429).send("Too many requests");
-  }
   next();
 });
 
+// ✅ Your frontend secret check (AFTER CORS!)
 app.use((req, res, next) => {
-  // Your secret key stored safely in environment variables
-  const realIP = req.headers["x-forwarded-for"] || req.ip;
-  const ua = req.headers["user-agent"];
-  console.log(`Real IP: ${realIP}`);
-  console.log(`User-Agent: ${ua}`);
-
   const frontendSecret = process.env.FRONTEND_SECRET;
-
-  // Get the header from request
   const clientSecret = req.headers["x-meta"];
 
-  // console.log(frontendSecret);
-
-  // console.log("client secret: ", clientSecret);
-  // console.log("req headers: ", req.headers);
-
-  // To persuade those used my backend server publicly
-  console.log("clientSecret: ", clientSecret);
-  console.log("frontendSecret: ", frontendSecret);
-  console.log(clientSecret === frontendSecret);
+  if (req.method === "OPTIONS") return next(); // Allow preflight
 
   if (clientSecret !== frontendSecret) {
     console.warn(`Unauthorized access attempt from IP: ${req.ip}`);
@@ -157,54 +87,23 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use((req, res, next) => {
-//   const allowedIPs = [
-//     "127.0.0.1",
-//     "::1",
-//     "::ffff:127.0.0.1",
-//     // "YOUR_SERVER_PUBLIC_IP",
-//   ];
-
-//   const clientIP = req.ip;
-
-//   if (!allowedIPs.includes(clientIP)) {
-//     console.warn(`Blocked IP attempt: ${clientIP}`);
-//     return res.status(403).json({ message: "Access denied" });
-//   }
-
-//   next();
-// });
-
 app.use((req, res, next) => {
-  const clientIP = req.ip;
-
   console.log(
-    `Incoming request from: ${clientIP} -> ${req.method} ${req.originalUrl}`
+    `Incoming request from: ${req.ip} -> ${req.method} ${req.originalUrl}`
   );
   next();
 });
 
+// ✅ Routes
 app.use("/api/users", userRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/settings", settingsRoutes);
 
-// if (process.env.NODE_ENV === "production") {
-//   const __dirname = path.resolve();
-//   app.use(express.static(path.join(__dirname, "/frontend/dist")));
-
-//   app.get("*", (req, res) =>
-//     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
-//   );
-// } else {
-//   app.get("/", (req, res) => {
-//     res.send("API is running....");
-//   });
-// }
-
+// ✅ Error handling
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 8080, () => {
   console.log(`Backend Server is running on port ${process.env.PORT}`);
 });
