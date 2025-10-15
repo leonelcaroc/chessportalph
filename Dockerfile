@@ -28,4 +28,4 @@ ENV NODE_ENV=production
 # -------------------------------
 # 5️⃣ Start the app
 # -------------------------------
-CMD ["node", "backend/server.js"]
+CMD ["npm", "run", "start"]
